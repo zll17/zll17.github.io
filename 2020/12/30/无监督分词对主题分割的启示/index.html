@@ -1,0 +1,516 @@
+
+
+<!DOCTYPE html>
+<html lang="en" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="zhangleilan">
+  <meta name="keywords" content="">
+  <title>无监督分词对主题分割的启示 - Take it easy</title>
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css" />
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_6peoq002giu.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_pjno9b9zyxs.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 5.1.1"></head>
+
+
+<body>
+  <header style="height: 35vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Leilan's Blog</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                Home
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                Archives
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                Categories
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                Tags
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                About
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner intro-2" id="background" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container page-header text-center fade-in-up">
+            <span class="h2" id="subtitle">
+              
+                无监督分词对主题分割的启示
+              
+            </span>
+
+            
+              
+  <div class="mt-3 post-meta">
+    <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+    <time datetime="2020-12-30 14:10" pubdate>
+      December 30, 2020 pm
+    </time>
+  </div>
+
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      2.2k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      24
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto" id="post">
+            <!-- SEO header -->
+            <h1 style="display: none">无监督分词对主题分割的启示</h1>
+            
+            <div class="markdown-body" id="post-body">
+              <center><h1>无监督分词对主题分割的启示</h1></center>
+
+<h4 id="Background"><a href="#Background" class="headerlink" title="Background"></a>Background</h4><p>在此前的研究中我实现了若干神经主题模型<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Leilan Zhang. Neural Topic Models. Github
+">[1]</span></a></sup>，这些主题模型在应用于短文本时有着比统计主题模型更好的效果（从主观和客观指标上都是如此）。实验室此前曾有过诗歌生成相关的研究，于是我想，这些主题模型可以应用到诗歌上吗？两个自然的方向是：</p>
+<ol>
+<li>应用主题模型对诗歌进行聚类</li>
+<li>对诗歌进行主题建模，并用主题导向进行诗歌生成</li>
+</ol>
+<p>以上两个任务都需要首先对诗句进行分词。然而目前已有的分词工具都是针对现代文进行分词，在诗句上的效果并不够理想，以下例子是采用主流的jieba和HanLP分词工具对同一句诗的分词结果。可以看到，两种工具分别给出了错误的分词结果。</p>
+<pre><code class="hljs powershell">&gt;&gt;&gt; s=<span class="hljs-string">&quot;锦瑟无端五十弦，一弦一柱思华年&quot;</span>
+&gt;&gt;&gt; list(jieba.cut(s))
+[<span class="hljs-string">&#x27;锦瑟&#x27;</span>, <span class="hljs-string">&#x27;无端&#x27;</span>, <span class="hljs-string">&#x27;五十&#x27;</span>, <span class="hljs-string">&#x27;弦&#x27;</span>, <span class="hljs-string">&#x27;，&#x27;</span>, <span class="hljs-string">&#x27;一弦&#x27;</span>, <span class="hljs-string">&#x27;一柱&#x27;</span>, <span class="hljs-string">&#x27;思华&#x27;</span>, <span class="hljs-string">&#x27;年&#x27;</span>]
+&gt;&gt;&gt; [<span class="hljs-type">t.word</span> <span class="hljs-type">for</span> <span class="hljs-type">t</span> <span class="hljs-type">in</span> <span class="hljs-type">list</span>(<span class="hljs-type">HanLP.segment</span>(<span class="hljs-type">s</span>))]
+[<span class="hljs-string">&#x27;锦&#x27;</span>, <span class="hljs-string">&#x27;瑟&#x27;</span>, <span class="hljs-string">&#x27;无端&#x27;</span>, <span class="hljs-string">&#x27;五十&#x27;</span>, <span class="hljs-string">&#x27;弦&#x27;</span>, <span class="hljs-string">&#x27;，&#x27;</span>, <span class="hljs-string">&#x27;一&#x27;</span>, <span class="hljs-string">&#x27;弦&#x27;</span>, <span class="hljs-string">&#x27;一柱&#x27;</span>, <span class="hljs-string">&#x27;思&#x27;</span>, <span class="hljs-string">&#x27;华年&#x27;</span>]</code></pre>
+
+<p>究其原因，是由于该句中包含现代汉语中并不常见的词“锦瑟”和“华年”。又如：</p>
+<pre><code class="hljs powershell">&gt;&gt;&gt; s=<span class="hljs-string">&quot;最是人间留不住，朱颜辞镜花辞树。&quot;</span>
+&gt;&gt;&gt; list(jieba.cut(s))
+[<span class="hljs-string">&#x27;最是&#x27;</span>, <span class="hljs-string">&#x27;人间&#x27;</span>, <span class="hljs-string">&#x27;留不住&#x27;</span>, <span class="hljs-string">&#x27;，&#x27;</span>, <span class="hljs-string">&#x27;朱颜&#x27;</span>, <span class="hljs-string">&#x27;辞&#x27;</span>, <span class="hljs-string">&#x27;镜花&#x27;</span>, <span class="hljs-string">&#x27;辞树&#x27;</span>, <span class="hljs-string">&#x27;。&#x27;</span>]
+&gt;&gt;&gt; [<span class="hljs-type">t.word</span> <span class="hljs-type">for</span> <span class="hljs-type">t</span> <span class="hljs-type">in</span> <span class="hljs-type">list</span>(<span class="hljs-type">HanLP.segment</span>(<span class="hljs-type">s</span>))]
+[<span class="hljs-string">&#x27;最&#x27;</span>, <span class="hljs-string">&#x27;是&#x27;</span>, <span class="hljs-string">&#x27;人间&#x27;</span>, <span class="hljs-string">&#x27;留不住&#x27;</span>, <span class="hljs-string">&#x27;，&#x27;</span>, <span class="hljs-string">&#x27;朱颜&#x27;</span>, <span class="hljs-string">&#x27;辞&#x27;</span>, <span class="hljs-string">&#x27;镜花&#x27;</span>, <span class="hljs-string">&#x27;辞树&#x27;</span>, <span class="hljs-string">&#x27;。&#x27;</span>]</code></pre>
+
+<p>上例中，两个算法对“镜”与“花”之间都没有作出正确的切分。更甚者，在面对大量OOV时，会给出非常糟糕的结果，如：</p>
+<pre><code class="hljs powershell">&gt;&gt;&gt; s=<span class="hljs-string">&quot;落霞与孤鹜齐飞，秋水共长天一色。&quot;</span>
+&gt;&gt;&gt; list(jieba.cut(s))
+[<span class="hljs-string">&#x27;落霞与孤鹜齐飞&#x27;</span>, <span class="hljs-string">&#x27;，&#x27;</span>, <span class="hljs-string">&#x27;秋水共长天一色&#x27;</span>, <span class="hljs-string">&#x27;。&#x27;</span>]
+&gt;&gt;&gt; [<span class="hljs-type">t.word</span> <span class="hljs-type">for</span> <span class="hljs-type">t</span> <span class="hljs-type">in</span> <span class="hljs-type">list</span>(<span class="hljs-type">HanLP.segment</span>(<span class="hljs-type">s</span>))]
+[<span class="hljs-string">&#x27;落霞与孤鹜齐飞&#x27;</span>, <span class="hljs-string">&#x27;，&#x27;</span>, <span class="hljs-string">&#x27;秋水共长天一色&#x27;</span>, <span class="hljs-string">&#x27;。&#x27;</span>]</code></pre>
+
+
+
+<p>这些都是因为主流分词工具所采用的词典是针对现代汉语进行构建，而古汉语则常以单字作词，因此，如想要在古诗词或古汉语上取得较好的分词结果，需要启用对应的词典或有针对地进行训练。为此我们来考察针对古汉语的分词算法。</p>
+<p>常见的分词算法主要是基于词典和基于统计两大类，这两类都需要人工标注（或构造词典）。但是古汉语的分词标注语料几乎没有，而且由于不同年代的古汉语有自身的特色（例如唐宋文言平白易懂，而先秦文言更为简练），对标注工作提出了较高的门槛，这使得获取一定规模的高质量分词语料注定耗费较多的人力、财力和时间。</p>
+<p>这时无监督分词算法的必要性就体现出来了：如果能用无监督的方法构造针对古汉语的词典，或者利用无监督的方法直接进行分词，那就可以省去非常繁难的标注任务。略加思考就会发现，尽管以上分词算法针对古汉语提出，但该算法可以推广到许多类似场景，使得只要有特定领域/语言的生语料，就可以训练得到适用于该领域的分词器，因此应用面非常广。</p>
+<h4 id="无监督分词"><a href="#无监督分词" class="headerlink" title="无监督分词"></a>无监督分词</h4><p>无监督的分词算法具体要怎么实现呢？目前我认为比较可行的一种做法是利用预训练模型。预训练模型在训练时已经习得了语言的词法和句法特征，如果能合理利用，也就为分词提供了可能。这方面已经有人做了初步研究，Wu等人在ACL 2020的论文 <sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="Zhiyong Wu, Yun Chen, Ben Kao, Qun Liu. 2020. Perturbed Masking: Parameter-free Probing for Analyzing and Interpreting BERT. ACL.
+">[2]</span></a></sup>中首次利用BERT进行句法分析。</p>
+<p>苏剑林<sup id="fnref:3" class="footnote-ref"><a href="#fn:3" rel="footnote"><span class="hint--top hint--rounded" aria-label="苏剑林. 2020. BERT无监督分词和句法分析上的应用
+">[3]</span></a></sup>则利用前述论文中的相关矩阵，通过相关度与阈值的比较来完成分词任务（现代汉语），初步证明了用BERT进行无监督分词的可行性。但该方法的缺点也很明显，即需要人工设定阈值，而阈值对分词的效果有非常直接的影响。</p>
+<center>    <img src="https://kexue.fm/usr/uploads/2020/06/4059500971.png" srcset="/img/loading.gif" alt="图1. 基于BERT的“token-token”相关度计算图示（原句为“欧拉是一名数学家”）" style="zoom: 40%;" />    <br>    <div style="color:orange;     display: inline-block;    color: #000;    padding: 2px; style="font-family:Song" ">图1. 基于BERT的“token-token”相关度计算图示（原句为“欧拉是一名数学家”）</div> </center>
+
+
+
+<p>其后在俞敬松等人的论文<sup id="fnref:4" class="footnote-ref"><a href="#fn:4" rel="footnote"><span class="hint--top hint--rounded" aria-label="俞敬松,魏一,张永伟,杨浩. 2020. 基于非参数贝叶斯模型和深度学习的古文分词研究. 中文信息学报.
+">[4]</span></a></sup><sup id="fnref:5" class="footnote-ref"><a href="#fn:5" rel="footnote"><span class="hint--top hint--rounded" aria-label="俞敬松,魏一,张永伟. 2019. 基于BERT的古文断句研究与应用. 中文信息学报.
+">[5]</span></a></sup>中，通过训练多个分词器，将分词结果一致的词纳入词典中，再迭代改进分词器性能。从最终论文中所报告的性能来看，该方法能够达到较高的切分精度，不足之处在于所需耗费的算力巨大。</p>
+<img src="/2020/12/30/%E6%97%A0%E7%9B%91%E7%9D%A3%E5%88%86%E8%AF%8D%E5%AF%B9%E4%B8%BB%E9%A2%98%E5%88%86%E5%89%B2%E7%9A%84%E5%90%AF%E7%A4%BA/bert_wordseg_fig2.png" srcset="/img/loading.gif" class="" title="The architecture of Yu" alt="s model">
+
+
+
+<p>因而，寻找能以较小计算量达到较高准确率的无监督切分算法，仍是实际所需。</p>
+<h4 id="文本分割"><a href="#文本分割" class="headerlink" title="文本分割"></a>文本分割</h4><p>回到文本分割的任务上来，如果我们站在稍微高一点的角度，就能看到，文本分割$ S_{1}S_{2}S_{3}…S_{n}$ 与 分词$ W_{1}W_{2}W_{3}…W_{n}$ 非常相似，都是在判断连续块之间的边界，都可以用<strong>B</strong>、<strong>I</strong>两个标记进行分割。不同之处在于，对于分词来说，其字表是固定的，且传统分词可以不用考虑字的语义；而对文本分割而言，因为涉及语义，如何表示句子是一个首先要考虑的问题，其次，句子的数量不可胜数，因而不能用一个固定大小的”句表”来记录，这导致每个句子的概率趋近零且在实际中不具可操作性。我们先来考虑后一个问题。</p>
+<p>试想，如果对句子的表示进行“量化”，即通过一定的划分方式将连续的句子表示“离散化”，那么就能把原本无限的句子表示空间降为有限的大小固定的表。例如，原本的句子表示$x$的取值范围为$[0,10]$的实数，每个实数都表达不同的语义，相近的实数表达的语义相同，这时句子空间是无限的，但如果我们将其量化为$[0,1),[1,2),…[9,10]$共10个区间，并把落到同一区间的句子视作包含某种共性（如主题相同等），就能用大小为10的表来表现所有的句子。</p>
+<p>以上只是一个简单的例子，实际问题中的量化要仔细地设计。就句子的表示而言，可以采用主题建模后的主题分布，并对这个分布进行量化（因原本的主题分布也是在实空间）；也可以采用预训练模型抽取的语义向量；或者是二者的结合等。</p>
+<p>量化之后的句子流也就有了固定的“句表”，此时的分割算法，理论上可以采用传统分词算法中所用的HMM，CRF等有监督模型，不过往往标注数据不能达到足够的量（毕竟对句子的标注比对词的标注要难多了），因而更可行的是采用前述的无监督的分割方法，通过比对一致再迭代改进的步骤训练模型，同时，因为无需标注，可用的数据非常充足，给训练较高准确率的切分模型提供了可能性。</p>
+<p>需要补充的是，由于预训练模型（如BERT）的粒度较细，若直接用于主题层面则不太可取；如果文本分割的任务是以主题为划分依据，则需要尽可能提高主题模型的建模性能，才有利于改善分割结果的准确率。</p>
+<h5 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h5><section class="footnotes"><div class="footnote-list"><ol><li><span id="fn:1" class="footnote-text"><span><a target="_blank" rel="noopener" href="https://github.com/zll17">Leilan Zhang. Neural Topic Models. Github</a>
+<a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩</a></span></span></li><li><span id="fn:2" class="footnote-text"><span><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2004.14786">Zhiyong Wu, Yun Chen, Ben Kao, Qun Liu. 2020. Perturbed Masking: Parameter-free Probing for Analyzing and Interpreting BERT. ACL.</a>
+<a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩</a></span></span></li><li><span id="fn:3" class="footnote-text"><span><a target="_blank" rel="noopener" href="https://kexue.fm/archives/7476">苏剑林. 2020. BERT无监督分词和句法分析上的应用</a>
+<a href="#fnref:3" rev="footnote" class="footnote-backref"> ↩</a></span></span></li><li><span id="fn:4" class="footnote-text"><span><a target="_blank" rel="noopener" href="http://gb.oversea.cnki.net/KCMS/detail/detail.aspx?filename=MESS202006002&dbcode=CJFD&dbname=CJFDTEMP">俞敬松,魏一,张永伟,杨浩. 2020. 基于非参数贝叶斯模型和深度学习的古文分词研究. 中文信息学报.</a>
+<a href="#fnref:4" rev="footnote" class="footnote-backref"> ↩</a></span></span></li><li><span id="fn:5" class="footnote-text"><span><a target="_blank" rel="noopener" href="http://jcip.cipsc.org.cn/CN/abstract/abstract2861.shtml">俞敬松,魏一,张永伟. 2019. 基于BERT的古文断句研究与应用. 中文信息学报.</a>
+<a href="#fnref:5" rev="footnote" class="footnote-backref"> ↩</a></span></span></li></ol></div></section>
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/NLP/">NLP</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/01/04/%E5%9F%BA%E4%BA%8EHMM%E6%9E%84%E5%BB%BA%E6%97%A0%E7%9B%91%E7%9D%A3%E5%88%86%E8%AF%8D/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">基于HMM构建无监督分词</span>
+                        <span class="visible-mobile">Previous</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/12/23/CV-Leilan-ZHANG/">
+                        <span class="hidden-mobile">CV - Leilan ZHANG</span>
+                        <span class="visible-mobile">Next</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;TOC</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">keyword</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: '#post-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
+      }
+    });
+  </script>
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
