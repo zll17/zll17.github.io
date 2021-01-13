@@ -17,10 +17,20 @@
   <meta name="description" content="">
   <meta name="author" content="zhangleilan">
   <meta name="keywords" content="">
-  <title>Tags - Take it easy</title>
+  <title>新闻文本的BERT隐空间分布可视化 - Take it easy</title>
 
   <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
 
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css" />
+  
+
+  
 
 
 <!-- 主题依赖的图标库，不要自行修改 -->
@@ -47,7 +57,7 @@
 
 
 <body>
-  <header style="height: 80vh;">
+  <header style="height: 35vh;">
     <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand"
@@ -148,9 +158,43 @@
           <div class="container page-header text-center fade-in-up">
             <span class="h2" id="subtitle">
               
-                Tag
+                新闻文本的BERT隐空间分布可视化
               
             </span>
+
+            
+              
+  <div class="mt-3 post-meta">
+    <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+    <time datetime="2021-01-10 15:41" pubdate>
+      January 10, 2021 pm
+    </time>
+  </div>
+
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      256 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      2
+       分钟
+    </span>
+  
+
+  
+  
+</div>
 
             
           </div>
@@ -163,24 +207,84 @@
 
   <main>
     
-      <div class="container nopadding-md">
-        <div class="py-5" id="board"
-          >
-          
-          <div class="container">
-            <div class="row">
-              <div class="col-12 col-md-10 m-auto">
-                
+      
 
-<div class="text-center tagcloud">
-  <a href="/tags/BERT-NLP/" style="font-size: 15px; color: #bbe">BERT NLP</a> <a href="/tags/Latex-VSCode/" style="font-size: 15px; color: #bbe">Latex, VSCode</a> <a href="/tags/MySQL-CentOS-Python/" style="font-size: 15px; color: #bbe">MySQL, CentOS, Python</a> <a href="/tags/NLP/" style="font-size: 15px; color: #bbe">NLP</a> <a href="/tags/algorithm-acm/" style="font-size: 15px; color: #bbe">algorithm acm</a> <a href="/tags/personal/" style="font-size: 15px; color: #bbe">personal</a> <a href="/tags/topic-model/" style="font-size: 15px; color: #bbe">topic model</a> <a href="/tags/%E4%B8%BB%E9%A2%98-%E8%81%9A%E7%B1%BB-%E6%97%A0%E7%9B%91%E7%9D%A3-GMM-VAE/" style="font-size: 15px; color: #bbe">主题 聚类 无监督 GMM VAE</a> <a href="/tags/%E7%A7%91%E7%A0%94-%E6%96%87%E7%8C%AE%E7%AE%A1%E7%90%86/" style="font-size: 15px; color: #bbe">科研 文献管理</a>
-</div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto" id="post">
+            <!-- SEO header -->
+            <h1 style="display: none">新闻文本的BERT隐空间分布可视化</h1>
+            
+            <div class="markdown-body" id="post-body">
+              <p>在使用BERT对文本进行表示的过程中，常见的方法包括取[CLS]、取max、取average，一个很自然的问题是该选择哪一层进行操作，以及文本在各层中呈现怎样的分布。于是做了一个小实验，对BERT的各层做了一个可视化，所选用的数据集是新闻短文本THUCNews，这个数据集带有类别标签，方便查看不同类别（主题）的文本在BERT的隐空间中的分布情况。</p>
+<iframe width="100%" height="5800" src="/assets/BERT_layers_emb_display.html" scrolling="auto" frameborder="0" style="box-shadow: 0px 0px 20px -10px #888;"></iframe>
 
-              </div>
+
+
+<p>直观来看，实验结果显示出不同主题文本的表示具有较好的区分性，用于聚类应该是很容易了。而且我原本以为，前几层的BERT表示区分性会不够明显，但这个结果看起来也还不错，或许是不同主题的文本的词分布本来就有较大差异导致的，（换言之可能是数据集太简单），后续可以进一步验证一下。</p>
+<p>待续…</p>
+
             </div>
-          </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/BERT-NLP/">BERT NLP</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/12/30/%E6%97%A0%E7%9B%91%E7%9D%A3%E5%88%86%E8%AF%8D%E5%AF%B9%E4%B8%BB%E9%A2%98%E5%88%86%E5%89%B2%E7%9A%84%E5%90%AF%E7%A4%BA/">
+                        <span class="hidden-mobile">无监督分词对主题分割的启示</span>
+                        <span class="visible-mobile">Next</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
         </div>
       </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;TOC</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
     
   </main>
 
@@ -258,9 +362,49 @@
 
 
 
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: '#post-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
+      }
+    });
+  </script>
 
 
 
+
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
 
 
 
@@ -275,6 +419,20 @@
   </script>
 
 
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
 
 
 
