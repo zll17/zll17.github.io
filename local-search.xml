@@ -4,25 +4,6 @@
   
   
   <entry>
-    <title>新闻文本的BERT隐空间分布可视化</title>
-    <link href="/2021/01/10/%E6%96%B0%E9%97%BB%E6%96%87%E6%9C%AC%E7%9A%84BERT%E9%9A%90%E7%A9%BA%E9%97%B4%E5%88%86%E5%B8%83%E5%8F%AF%E8%A7%86%E5%8C%96/"/>
-    <url>/2021/01/10/%E6%96%B0%E9%97%BB%E6%96%87%E6%9C%AC%E7%9A%84BERT%E9%9A%90%E7%A9%BA%E9%97%B4%E5%88%86%E5%B8%83%E5%8F%AF%E8%A7%86%E5%8C%96/</url>
-    
-    <content type="html"><![CDATA[<p>在使用BERT对文本进行表示的过程中，常见的方法包括取[CLS]、取max、取average，一个很自然的问题是该选择哪一层进行操作，以及文本在各层中呈现怎样的分布。于是做了一个小实验，对BERT的各层做了一个可视化，所选用的数据集是新闻短文本THUCNews，这个数据集带有类别标签，方便查看不同类别（主题）的文本在BERT的隐空间中的分布情况。</p><iframe width="100%" height="5800" src="/assets/BERT_layers_emb_display.html" scrolling="auto" frameborder="0" style="box-shadow: 0px 0px 20px -10px #888;"></iframe><p>直观来看，实验结果显示出不同主题文本的表示具有较好的区分性，用于聚类应该是很容易了。而且我原本以为，前几层的BERT表示区分性会不够明显，但这个结果看起来也还不错，或许是不同主题的文本的词分布本来就有较大差异导致的，（换言之可能是数据集太简单），后续可以进一步验证一下。</p><p>待续…</p>]]></content>
-    
-    
-    
-    <tags>
-      
-      <tag>BERT NLP</tag>
-      
-    </tags>
-    
-  </entry>
-  
-  
-  
-  <entry>
     <title>Introduction to Neural Topic Models</title>
     <link href="/2020/11/17/Introduction-to-Neural-Topic-Models/"/>
     <url>/2020/11/17/Introduction-to-Neural-Topic-Models/</url>
