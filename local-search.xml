@@ -4,6 +4,25 @@
   
   
   <entry>
+    <title>NLP数据集整理</title>
+    <link href="/2021/03/25/NLP%E6%95%B0%E6%8D%AE%E9%9B%86%E6%95%B4%E7%90%86/"/>
+    <url>/2021/03/25/NLP%E6%95%B0%E6%8D%AE%E9%9B%86%E6%95%B4%E7%90%86/</url>
+    
+    <content type="html"><![CDATA[<p>不知不觉就搜集了很多NLP的数据集，然而这些数据躺在硬盘里也没一个好的索引，不用的时候嫌占空间，需要的时候又找不到。遂下决心整理了一个目录，方便自己日后查找。幸好有1bo鼎力相助，前后花了大约两天，终于整理好了。</p><p>入口：<a href="https://zll17.github.io/files/nlp_corpora/mycopora.html">Corpora Catelog</a></p>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>NLP 数据集</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>Introduction to Neural Topic Models</title>
     <link href="/2020/11/17/Introduction-to-Neural-Topic-Models/"/>
     <url>/2020/11/17/Introduction-to-Neural-Topic-Models/</url>
