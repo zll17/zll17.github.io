@@ -1,229 +1,200 @@
-
-
 <!DOCTYPE html>
-<html lang="en" data-default-color-scheme=&#34;auto&#34;>
-
-
-
+<html lang=en>
 <head>
-  <meta charset="UTF-8">
-  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
-  <link rel="icon" type="image/png" href="/img/favicon.png">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  
-  <meta name="theme-color" content="#2f4154">
-  <meta name="description" content="">
-  <meta name="author" content="zhangleilan">
-  <meta name="keywords" content="">
-  <title>Introduction to Neural Topic Models - Take it easy</title>
-
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
-
-
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
-  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
-
-  
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="English | 中文  PyTorch implementations of Neural Topic Model varieties proposed in recent years, including NVDM-GSM, WTM-MMD (W-LDA), WTM-GMM, ETM, BATM ,and GMNTM. The aim of this project is to prov">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Introduction to Neural Topic Models">
+<meta property="og:url" content="https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/index.html">
+<meta property="og:site_name" content="Take it easy">
+<meta property="og:description" content="English | 中文  PyTorch implementations of Neural Topic Model varieties proposed in recent years, including NVDM-GSM, WTM-MMD (W-LDA), WTM-GMM, ETM, BATM ,and GMNTM. The aim of this project is to prov">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/assets/logo.png">
+<meta property="og:image" content="https://img.shields.io/badge/License-Apache%202.0-blue.svg">
+<meta property="og:image" content="https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/assets/vae_arch.png">
+<meta property="og:image" content="https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/assets/GSM_cnews10k.png">
+<meta property="og:image" content="https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/assets/wtm_arch.png">
+<meta property="og:image" content="https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/assets/WTM_cnews10k.png">
+<meta property="og:image" content="https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/assets/wtm_gmm_arch.png">
+<meta property="og:image" content="https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/assets/WLDA-GMM_zhdd.png">
+<meta property="og:image" content="https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/assets/etm_arch.png">
+<meta property="og:image" content="https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/assets/gmvae_arch.png">
+<meta property="og:image" content="https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/assets/BATM_arch.png">
+<meta property="og:image" content="https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/assets/cnews10k_exp.png">
+<meta property="og:image" content="https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/assets/zhddline_exp.png">
+<meta property="og:image" content="https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/assets/zhdd_exp.png">
+<meta property="og:image" content="https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/assets/3body1_exp.png">
+<meta property="og:image" content="https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/assets/zhddline_exp_short.png">
+<meta property="og:image" content="https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/assets/tokenizer_exp.png">
+<meta property="og:image" content="https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/assets/WLDA-GMM_zhddline10k.png">
+<meta property="og:image" content="https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/assets/logo.png">
+<meta property="og:image" content="https://img.shields.io/badge/License-Apache%202.0-blue.svg">
+<meta property="og:image" content="https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/assets/vae_arch.png">
+<meta property="og:image" content="https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/assets/GSM_cnews10k.png">
+<meta property="og:image" content="https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/assets/wtm_arch.png">
+<meta property="og:image" content="https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/assets/WTM_cnews10k.png">
+<meta property="og:image" content="https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/assets/wtm_gmm_arch.png">
+<meta property="og:image" content="https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/assets/WLDA-GMM_zhdd.png">
+<meta property="og:image" content="https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/assets/etm_arch.png">
+<meta property="og:image" content="https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/assets/gmvae_arch.png">
+<meta property="og:image" content="https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/assets/BATM_arch.png">
+<meta property="og:image" content="https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/assets/cnews10k_exp.png">
+<meta property="og:image" content="https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/assets/zhddline_exp.png">
+<meta property="og:image" content="https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/assets/zhdd_exp.png">
+<meta property="og:image" content="https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/assets/3body1_exp.png">
+<meta property="og:image" content="https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/assets/zhddline_exp_short.png">
+<meta property="og:image" content="https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/assets/tokenizer_exp.png">
+<meta property="og:image" content="https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/assets/WLDA-GMM_zhddline10k.png">
+<meta property="article:published_time" content="2020-11-17T08:37:03.000Z">
+<meta property="article:modified_time" content="2020-11-25T08:14:59.823Z">
+<meta property="article:author" content="zhangleilan">
+<meta property="article:tag" content="topic model">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/assets/logo.png">
     
-    <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css" />
-  
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Introduction to Neural Topic Models</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
 
-  
-
-
-<!-- 主题依赖的图标库，不要自行修改 -->
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_6peoq002giu.css">
-
-
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_pjno9b9zyxs.css">
-
-
-<link  rel="stylesheet" href="/css/main.css" />
-
-<!-- 自定义样式保持在最底部 -->
-
-
-  <script  src="/js/utils.js" ></script>
-  <script  src="/js/color-schema.js" ></script>
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
 <!-- hexo injector head_end start -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
 <!-- hexo injector head_end end --><meta name="generator" content="Hexo 5.1.1"></head>
 
-
-<body>
-  <header style="height: 35vh;">
-    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
-  <div class="container">
-    <a class="navbar-brand"
-       href="/">&nbsp;<strong>Leilan's Blog</strong>&nbsp;</a>
-
-    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
-            data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <div class="animated-icon"><span></span><span></span><span></span></div>
-    </button>
-
-    <!-- Collapsible content -->
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ml-auto text-center">
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/">
-                <i class="iconfont icon-home-fill"></i>
-                Home
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/archives/">
-                <i class="iconfont icon-archive-fill"></i>
-                Archives
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/categories/">
-                <i class="iconfont icon-category-fill"></i>
-                Categories
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/tags/">
-                <i class="iconfont icon-tags-fill"></i>
-                Tags
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/about/">
-                <i class="iconfont icon-user-fill"></i>
-                About
-              </a>
-            </li>
-          
-        
-        
-          <li class="nav-item" id="search-btn">
-            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
-                class="iconfont icon-search"></i>&nbsp;</a>
-          </li>
-        
-        
-          <li class="nav-item" id="color-toggle-btn">
-            <a class="nav-link" href="javascript:">&nbsp;<i
-                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
-          </li>
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" "Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
         
       </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post " href="/2021/03/25/NLP%E6%95%B0%E6%8D%AE%E9%9B%86%E6%95%B4%E7%90%86/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post " href="/2020/08/27/Hexo%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E5%8F%8A%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top " href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post " href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/&text=Introduction to Neural Topic Models"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/&title=Introduction to Neural Topic Models"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/&is_video=false&description=Introduction to Neural Topic Models"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Introduction to Neural Topic Models&body=Check out this article: https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/&title=Introduction to Neural Topic Models"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/&title=Introduction to Neural Topic Models"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/&title=Introduction to Neural Topic Models"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/&title=Introduction to Neural Topic Models"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/&name=Introduction to Neural Topic Models&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/&t=Introduction to Neural Topic Models"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
     </div>
-  </div>
-</nav>
-
-    <div class="banner intro-2" id="background" parallax=true
-         style="background: url('/img/default.png') no-repeat center center;
-           background-size: cover;">
-      <div class="full-bg-img">
-        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
-          <div class="container page-header text-center fade-in-up">
-            <span class="h2" id="subtitle">
-              
-                Introduction to Neural Topic Models
-              
-            </span>
-
-            
-              
-  <div class="mt-3 post-meta">
-    <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-    <time datetime="2020-11-17 16:37" pubdate>
-      November 17, 2020 pm
-    </time>
-  </div>
-
-
-<div class="mt-1">
-  
-    
-    <span class="post-meta mr-2">
-      <i class="iconfont icon-chart"></i>
-      4.6k 字
-    </span>
-  
-
-  
-    
-    <span class="post-meta mr-2">
-      <i class="iconfont icon-clock-fill"></i>
-      
-      
-      71
-       分钟
-    </span>
-  
-
-  
-  
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#TOC_EN"><span class="toc-number">1.</span> <span class="toc-text">Table of Contents</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Installation"><span class="toc-number">2.</span> <span class="toc-text">1. Installation</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Models"><span class="toc-number">3.</span> <span class="toc-text">2. Models</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#NVDM-GSM"><span class="toc-number">3.1.</span> <span class="toc-text">2.1 NVDM-GSM</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Description"><span class="toc-number">3.1.1.</span> <span class="toc-text">Description</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Run-Example"><span class="toc-number">3.1.2.</span> <span class="toc-text">Run Example</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#WTM-MMD"><span class="toc-number">3.2.</span> <span class="toc-text">2.2 WTM-MMD</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Description-1"><span class="toc-number">3.2.1.</span> <span class="toc-text">Description</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Run-Example-1"><span class="toc-number">3.2.2.</span> <span class="toc-text">Run Example</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#WTM-GMM"><span class="toc-number">3.3.</span> <span class="toc-text">2.3 WTM-GMM</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Description-2"><span class="toc-number">3.3.1.</span> <span class="toc-text">Description</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Run-Example-2"><span class="toc-number">3.3.2.</span> <span class="toc-text">Run Example</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ETM"><span class="toc-number">3.4.</span> <span class="toc-text">2.4 ETM</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Description-3"><span class="toc-number">3.4.1.</span> <span class="toc-text">Description</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Run-Example-3"><span class="toc-number">3.4.2.</span> <span class="toc-text">Run Example</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GMNTM-VaDE"><span class="toc-number">3.5.</span> <span class="toc-text">2.5 GMNTM</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Description-4"><span class="toc-number">3.5.1.</span> <span class="toc-text">Description</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Run-Example-4"><span class="toc-number">3.5.2.</span> <span class="toc-text">Run Example</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#BATM"><span class="toc-number">3.6.</span> <span class="toc-text">2.6 BATM</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Description-5"><span class="toc-number">3.6.1.</span> <span class="toc-text">Description</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Run-Example-5"><span class="toc-number">3.6.2.</span> <span class="toc-text">Run Example</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Datasets"><span class="toc-number">4.</span> <span class="toc-text">3. Datasets</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Some-snippets"><span class="toc-number">4.0.0.1.</span> <span class="toc-text">Some snippets</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#cnews10k_exp"><span class="toc-number">4.0.0.1.1.</span> <span class="toc-text">3.1 cnews10k</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#zhddline_exp"><span class="toc-number">4.0.0.1.2.</span> <span class="toc-text">3.2 zhddline</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#zhdd_exp"><span class="toc-number">4.0.0.1.3.</span> <span class="toc-text">3.3 zhdd</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#3body1_exp"><span class="toc-number">4.0.0.1.4.</span> <span class="toc-text">3.4 3body1</span></a></li></ol></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Usage"><span class="toc-number">4.0.1.</span> <span class="toc-text">4. Usage</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#Preparation"><span class="toc-number">4.0.1.0.1.</span> <span class="toc-text">4.1 Preparation</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Run"><span class="toc-number">4.0.1.0.2.</span> <span class="toc-text">4.2 Run</span></a></li></ol></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Acknowledgement"><span class="toc-number">4.0.2.</span> <span class="toc-text">5. Acknowledgement</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#License"><span class="toc-number">4.0.3.</span> <span class="toc-text">License</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E5%BD%95"><span class="toc-number">5.</span> <span class="toc-text">目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TODO-zh"><span class="toc-number">6.</span> <span class="toc-text">TODO</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Installation-zh"><span class="toc-number">7.</span> <span class="toc-text">1. 安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Models-zh"><span class="toc-number">8.</span> <span class="toc-text">2. 模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#NVDM-GSM-zh"><span class="toc-number">8.1.</span> <span class="toc-text">2.1 NVDM-GSM</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Description-6"><span class="toc-number">8.1.1.</span> <span class="toc-text">Description</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Run-Example-6"><span class="toc-number">8.1.2.</span> <span class="toc-text">Run Example</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#WTM-MMD-zh"><span class="toc-number">8.2.</span> <span class="toc-text">2.2 WTM-MMD</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Description-7"><span class="toc-number">8.2.1.</span> <span class="toc-text">Description</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Run-Example-7"><span class="toc-number">8.2.2.</span> <span class="toc-text">Run Example</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#WTM-GMM-zh"><span class="toc-number">8.3.</span> <span class="toc-text">2.3 WTM-GMM</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Description-8"><span class="toc-number">8.3.1.</span> <span class="toc-text">Description</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Run-Example-8"><span class="toc-number">8.3.2.</span> <span class="toc-text">Run Example</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ETM-zh"><span class="toc-number">8.4.</span> <span class="toc-text">2.4 ETM</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Description-9"><span class="toc-number">8.4.1.</span> <span class="toc-text">Description</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Run-Example-9"><span class="toc-number">8.4.2.</span> <span class="toc-text">Run Example</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GMNTM-VaDE-zh"><span class="toc-number">8.5.</span> <span class="toc-text">2.5 GMNTM</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Description-10"><span class="toc-number">8.5.1.</span> <span class="toc-text">Description</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Run-Example-10"><span class="toc-number">8.5.2.</span> <span class="toc-text">Run Example</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#BATM-zh"><span class="toc-number">8.6.</span> <span class="toc-text">2.6 BATM</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Description-11"><span class="toc-number">8.6.1.</span> <span class="toc-text">Description</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Run-Example-11"><span class="toc-number">8.6.2.</span> <span class="toc-text">Run Example</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Datasets-zh"><span class="toc-number">9.</span> <span class="toc-text">3. 数据集</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#cnews10k_exp-zh"><span class="toc-number">9.0.0.0.1.</span> <span class="toc-text">3.1 cnews10k</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#zhddline_exp-zh"><span class="toc-number">9.0.0.0.2.</span> <span class="toc-text">3.2 zhddline</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#zhdd_exp-zh"><span class="toc-number">9.0.0.0.3.</span> <span class="toc-text">3.3 zhdd</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#3body1_exp-zh"><span class="toc-number">9.0.0.0.4.</span> <span class="toc-text">3.4 3body1</span></a></li></ol></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Usage-zh"><span class="toc-number">9.0.1.</span> <span class="toc-text">4. 使用教程</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#Preparation-zh"><span class="toc-number">9.0.1.0.1.</span> <span class="toc-text">4.1 Preparation</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Run-zh"><span class="toc-number">9.0.1.0.2.</span> <span class="toc-text">4.2 Run</span></a></li></ol></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Acknowledgement-zh"><span class="toc-number">9.0.2.</span> <span class="toc-text">5. Acknowledgement</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#License"><span class="toc-number">9.0.3.</span> <span class="toc-text">License</span></a></li></ol></li></ol></li></ol>
+    </div>
+  </span>
 </div>
 
-            
-          </div>
-
-          
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <main>
     
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        Introduction to Neural Topic Models
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">zhangleilan</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-11-17T08:37:03.000Z" itemprop="datePublished">2020-11-17</time>
+        
+      
+    </div>
+
+
       
 
-<div class="container-fluid">
-  <div class="row">
-    <div class="d-none d-lg-block col-lg-2"></div>
-    <div class="col-lg-8 nopadding-md">
-      <div class="container nopadding-md" id="board-ctn">
-        <div class="py-5" id="board">
-          <article class="post-content mx-auto" id="post">
-            <!-- SEO header -->
-            <h1 style="display: none">Introduction to Neural Topic Models</h1>
-            
-            <div class="markdown-body" id="post-body">
-              <p align="center" id="title_en"><img src="assets/logo.png" srcset="/img/loading.gif" width="480"\></p>
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/topic-model/" rel="tag">topic model</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p align="center" id="title_en"><img src="assets/logo.png" width="480"\></p>
 
 <p><a href="#title_en">English</a> | <a href="#title_zh">中文</a></p>
-<p><a target="_blank" rel="noopener" href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" srcset="/img/loading.gif" alt="License"></a></p>
+<p><a target="_blank" rel="noopener" href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License"></a></p>
 <p>PyTorch implementations of Neural Topic Model varieties proposed in recent years, including NVDM-GSM, WTM-MMD (W-LDA), WTM-GMM, ETM, BATM ,and GMNTM. The aim of this project is to provide a practical and working example for neural topic models to facilitate the research of related fields. Configuration of the models will not exactly the same as those proposed in the papers, and the hyper-parameters are not carefully finetuned, but I have chosen to get the core ideas covered. </p>
 <p>Empirically, NTM is superior to classical statistical topic models ,especially on short texts. Datasets of short news (<a href="#cnews10k_exp">cnews10k</a>), dialogue utterances (<a href="#zhddline_exp">zhddline</a>) and conversation (<a href="#zhdd_exp">zhdd</a>), are presented for evaluation purpose, all of which are in Chinese. As a comparison to the NTM, an out-of-box LDA script is also provided, which is based on the gensim library. </p>
 <p>If you have any question or suggestion about this implementation, please do not hesitate to contact me.   <strong>To make it better, welcome to join me.</strong> ;)</p>
@@ -271,7 +242,7 @@
 <p>Original paper: <em>Discovering Discrete Latent Topics with Neural Variational Inference</em></p>
 <p><em>Author:</em> Yishu Miao</p>
 <p align="center">
-    <img src="assets/vae_arch.png" srcset="/img/loading.gif" width="720"\>
+    <img src="assets/vae_arch.png" width="720"\>
 </p>
 
 
@@ -290,7 +261,7 @@
 <h4 id="Run-Example"><a href="#Run-Example" class="headerlink" title="Run Example"></a>Run Example</h4><pre><code class="hljs brainfuck"><span class="hljs-comment">$</span> <span class="hljs-comment">python3</span> <span class="hljs-comment">GSM_run</span><span class="hljs-string">.</span><span class="hljs-comment">py</span> --<span class="hljs-comment">taskname</span> <span class="hljs-comment">cnews10k</span> --<span class="hljs-comment">n_topic</span> <span class="hljs-comment">20</span> --<span class="hljs-comment">num_epochs</span> <span class="hljs-comment">1000</span> --<span class="hljs-comment">no_above</span> <span class="hljs-comment">0</span><span class="hljs-string">.</span><span class="hljs-comment">0134</span> --<span class="hljs-comment">no_below</span> <span class="hljs-comment">5</span> --<span class="hljs-comment">criterion</span> <span class="hljs-comment">cross_entropy</span> --<span class="hljs-comment">use_fc1</span></code></pre>
 
 <p align="center">
-    <img src="assets/GSM_cnews10k.png" srcset="/img/loading.gif" width="auto"\>
+    <img src="assets/GSM_cnews10k.png" width="auto"\>
 </p>
 
 
@@ -299,7 +270,7 @@
 <p>Original paper: <em>Topic Modeling with Wasserstein Autoencoders</em></p>
 <p><em>Author:</em> Feng Nan, Ran Ding, Ramesh Nallapati, Bing Xiang</p>
 <p align="center">
-    <img src="assets/wtm_arch.png" srcset="/img/loading.gif" width="720"\>
+    <img src="assets/wtm_arch.png" width="720"\>
 </p>
 
 <h4 id="Description-1"><a href="#Description-1" class="headerlink" title="Description"></a>Description</h4><p><strong>WAE with Dirichlet prior + Gaussian Softmax</strong></p>
@@ -312,7 +283,7 @@
 <h4 id="Run-Example-1"><a href="#Run-Example-1" class="headerlink" title="Run Example"></a>Run Example</h4><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> python3 WTM_run.py --taskname cnews10k --n_topic 20 --num_epochs 600 --no_above 0.013 --dist dirichlet</span></code></pre>
 
 <p align="center">
-    <img src="assets/WTM_cnews10k.png" srcset="/img/loading.gif" width="auto"\>
+    <img src="assets/WTM_cnews10k.png" width="auto"\>
 </p>
 
 
@@ -324,7 +295,7 @@
 <p>Original paper: <em>Research on Clustering for Subtitle Dialogue Text Based on Neural Topic Model</em></p>
 <p><em>Author:</em> Leilan Zhang</p>
 <p align="center">
-    <img src="assets/wtm_gmm_arch.png" srcset="/img/loading.gif" width="720"\>
+    <img src="assets/wtm_gmm_arch.png" width="720"\>
 </p>
 
 <h4 id="Description-2"><a href="#Description-2" class="headerlink" title="Description"></a>Description</h4><p><strong>WAE with Gaussian Mixture prior + Gaussian Softmax</strong></p>
@@ -336,7 +307,7 @@
 <h4 id="Run-Example-2"><a href="#Run-Example-2" class="headerlink" title="Run Example"></a>Run Example</h4><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> python3 WTM_run.py --taskname zhdd --n_topic 20 --num_epochs 300 --dist gmm-ctm --no_below 5 --auto_adj</span></code></pre>
 
 <p align="center">
-    <img src="assets/WLDA-GMM_zhdd.png" srcset="/img/loading.gif" width="auto"\>
+    <img src="assets/WLDA-GMM_zhdd.png" width="auto"\>
 </p>
 
 
@@ -345,7 +316,7 @@
 <p>Original paper: <em>Topic Modeling in Embedding Spaces</em></p>
 <p><em>Author:</em> Adji B. Dieng, Francisco J. R. Ruiz, David M. Blei</p>
 <p align="center">
-    <img src="assets/etm_arch.png" srcset="/img/loading.gif" width="720"\>
+    <img src="assets/etm_arch.png" width="720"\>
 </p>
 
 <h4 id="Description-3"><a href="#Description-3" class="headerlink" title="Description"></a>Description</h4><p><strong>VAE + Gaussian Softmax + Embedding</strong></p>
@@ -363,7 +334,7 @@
 <p>Original paper: <em>Research on Clustering for Subtitle Dialogue Text Based on Neural Topic Model</em></p>
 <p><em>Author:</em> Leilan Zhang</p>
 <p align="center">
-    <img src="assets/gmvae_arch.png" srcset="/img/loading.gif" width="720"\>
+    <img src="assets/gmvae_arch.png" width="720"\>
 </p>
 
 <h4 id="Description-4"><a href="#Description-4" class="headerlink" title="Description"></a>Description</h4><p>The architecture is based on <a target="_blank" rel="noopener" href="https://arxiv.org/abs/1611.05148">VaDE</a>, which takes Gaussian mixture distribution as a prior distribution. Different from the Wasserstein distance adopted by WAE, the VaDE uses KL divergence to measure the discrepancy of prior and variational distribution. It adopts a discrete variable to indicate the belonging component and a continuous variable to indicate the vector in latent space.  The original intent of the GMNTM is to improve the model’s representation ability with the import of the multi-mode distribution, to replace the single-mode multivariate Gaussian distribution utilized in GSM. Empirically, it does obtain a series of more diverse and coherent topics than GSM does. However, it suffers from the mode collapse problem, which will finally result in a series of homogeneous topics. Therefore, the training process should not be too long and should be stopped before the collapse occures. </p>
@@ -378,7 +349,7 @@
 <p>Origianal paper: <em>Neural Topic Modeling with Bidirectional Adversarial Training</em></p>
 <p><em>Author:</em> Rui Wang, Xuemeng Hu, Deyu Zhou, Yulan He, Yuxuan Xiong, Chenchen Ye, Haiyang Xu</p>
 <p align="center">
-    <img src="assets/BATM_arch.png" srcset="/img/loading.gif" width="720"\>
+    <img src="assets/BATM_arch.png" width="720"\>
     <div align="center">
         (The picture is taken from the original <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2004.12331">paper</a>.)
     </div>
@@ -442,25 +413,25 @@
 <h5 id="Some-snippets"><a href="#Some-snippets" class="headerlink" title="Some snippets"></a>Some snippets</h5><h6 id="cnews10k_exp">3.1 cnews10k</h6>
 
 <p align="center">
-    <img src="assets/cnews10k_exp.png" srcset="/img/loading.gif" width="640"\>
+    <img src="assets/cnews10k_exp.png" width="640"\>
 </p>
 
 <h6 id="zhddline_exp">3.2 zhddline</h6>
 
 <p align="center">
-    <img src="assets/zhddline_exp.png" srcset="/img/loading.gif" width="640"\>
+    <img src="assets/zhddline_exp.png" width="640"\>
 </p>
 
 <h6 id="zhdd_exp">3.3 zhdd</h6>
 
 <p align="center">
-    <img src="assets/zhdd_exp.png" srcset="/img/loading.gif" width="720"\>
+    <img src="assets/zhdd_exp.png" width="720"\>
 </p>
 
 <h6 id="3body1_exp">3.4 3body1</h6>
 
 <p align="center">
-    <img src="assets/3body1_exp.png" srcset="/img/loading.gif" width="720"\>
+    <img src="assets/3body1_exp.png" width="720"\>
 </p>
 
 
@@ -474,13 +445,13 @@
 
 <p>First, prepare the text data. One line will be taken as one document, so you need to <strong>keep one document in one line</strong>, in our example, each utterance per line. </p>
 <p align="center">
-    <img src="assets/zhddline_exp_short.png" srcset="/img/loading.gif" width="640"\>
+    <img src="assets/zhddline_exp_short.png" width="640"\>
 </p>
 
 <p>Then <strong>modify the name of the text file</strong> into the format {taskname}_lines.txt, in this case, <code>zhddline_lines.txt</code>. Put the renamed file in the <code>data</code> directory.</p>
 <p>Finally, <strong>choose the right tokenizer or create one by yourself</strong>. The tokenizer should be customized according to text type. The default configuration utilizes HanLP as tokenizer to deal with modern Chinese sentences. If you need to process other types of text (i.e. in English or in ancient Chinese), open the file <code>tokenization.py</code> ,  modify the code in function <code>Tokenizer</code> accordingly.</p>
 <p align="center">
-    <img src="assets/tokenizer_exp.png" srcset="/img/loading.gif" width="512"\>
+    <img src="assets/tokenizer_exp.png" width="512"\>
 </p>
 
 
@@ -492,7 +463,7 @@
 
 <p>The model will evaluate the topic coherence and topic diversity every 10 epochs, and display the top 20 topic words for each topic. The weight of the model will be stored in the <code>ckpt</code> directory once the training is done. The result of the topic modeling is shown below.</p>
 <p align="center">
-    <img src="assets/WLDA-GMM_zhddline10k.png" srcset="/img/loading.gif" width="auto"\>
+    <img src="assets/WLDA-GMM_zhddline10k.png" width="auto"\>
 </p>
 
 
@@ -528,10 +499,10 @@
 <hr>
 <p><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/></p>
 <hr>
-<p align="center" id="title_zh"><img src="assets/logo.png" srcset="/img/loading.gif" width="480"\></p>
+<p align="center" id="title_zh"><img src="assets/logo.png" width="480"\></p>
 
 <p><a href="#title_en">English</a> | <a href="#title_zh">中文</a></p>
-<p><a target="_blank" rel="noopener" href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" srcset="/img/loading.gif" alt="License"></a></p>
+<p><a target="_blank" rel="noopener" href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License"></a></p>
 <p>若干神经主题模型（Neural Topic Model, NTM）的PyTorch实现，包括NVDM-GSM、WTM-MMD (W-LDA)、WTM-GMM、ETM、 BATM 和 GMNTM。</p>
 <p>近年来基于VAE和GAN的神经主题模型的各类变种，相比于经典的统计主题模型（如LDA等），能提取到更一致的主题。NTM在稀疏性十分严重的场景下所提取到的主题，其一致性和多样性都优于LDA，是一种强大（且有意思）的模型。此项目的初衷是提供一组方便、实用的神经主题模型实现，包括部分论文的复现及我自己的改进模型。项目中的模型配置与原论文未必完全一致，但保留了原论文中心思想。</p>
 <p>此项目提供有三个中文短文本数据集——新闻标题数据集（<a href="data/cnews10k_lines.txt">cnews10k</a>）和对话数据集（<a href="data/zhdd_lines.txt">zhdd</a> 和 <a href="data/zhddline_lines.txt">zhddline</a>），作评测之用。作为对比，提供了基于gensim编写的LDA脚本，开箱即用，且接口与NTM保持一致。</p>
@@ -597,7 +568,7 @@
 <p>论文: <em>Discovering Discrete Latent Topics with Neural Variational Inference</em></p>
 <p>作者: Yishu Miao</p>
 <p align="center">
-    <img src="assets/vae_arch.png" srcset="/img/loading.gif" width="720"\>
+    <img src="assets/vae_arch.png" width="720"\>
 </p>
 
 
@@ -616,7 +587,7 @@
 <h4 id="Run-Example-6"><a href="#Run-Example-6" class="headerlink" title="Run Example"></a>Run Example</h4><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> python3 GSM_run.py --taskname cnews10k --n_topic 20 --num_epochs 1000 --no_above 0.0134 --no_below 5 --criterion cross_entropy --use_fc1</span></code></pre>
 
 <p align="center">
-    <img src="assets/GSM_cnews10k.png" srcset="/img/loading.gif" width="auto"\>
+    <img src="assets/GSM_cnews10k.png" width="auto"\>
 </p>
 
 
@@ -626,7 +597,7 @@
 <p>论文: <em>Topic Modeling with Wasserstein Autoencoders</em></p>
 <p>作者: Feng Nan, Ran Ding, Ramesh Nallapati, Bing Xiang</p>
 <p align="center">
-    <img src="assets/wtm_arch.png" srcset="/img/loading.gif" width="720"\>
+    <img src="assets/wtm_arch.png" width="720"\>
 </p>
 
 <h4 id="Description-7"><a href="#Description-7" class="headerlink" title="Description"></a>Description</h4><p><strong>WAE with Dirichlet prior + Gaussian Softmax</strong></p>
@@ -639,7 +610,7 @@
 <h4 id="Run-Example-7"><a href="#Run-Example-7" class="headerlink" title="Run Example"></a>Run Example</h4><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> python3 WTM_run.py --taskname cnews10k --n_topic 20 --num_epochs 600 --no_above 0.013 --dist dirichlet</span></code></pre>
 
 <p align="center">
-    <img src="assets/WTM_cnews10k.png" srcset="/img/loading.gif" width="auto"\>
+    <img src="assets/WTM_cnews10k.png" width="auto"\>
 </p>
 
 
@@ -649,7 +620,7 @@
 <p>论文: <em>Research on Clustering for Subtitle Dialogue Text Based on Neural Topic Model</em></p>
 <p>作者: Leilan Zhang</p>
 <p align="center">
-    <img src="assets/wtm_gmm_arch.png" srcset="/img/loading.gif" width="720"\>
+    <img src="assets/wtm_gmm_arch.png" width="720"\>
 </p>
 
 <h4 id="Description-8"><a href="#Description-8" class="headerlink" title="Description"></a>Description</h4><p><strong>WAE with Gaussian Mixture prior + Gaussian Softmax</strong></p>
@@ -661,7 +632,7 @@
 <h4 id="Run-Example-8"><a href="#Run-Example-8" class="headerlink" title="Run Example"></a>Run Example</h4><pre><code class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> python3 WTM_run.py --taskname zhdd --n_topic 20 --num_epochs 300 --dist gmm-ctm --no_below 5 --auto_adj</span></code></pre>
 
 <p align="center">
-    <img src="assets/WLDA-GMM_zhdd.png" srcset="/img/loading.gif" width="auto"\>
+    <img src="assets/WLDA-GMM_zhdd.png" width="auto"\>
 </p>
 
 
@@ -671,7 +642,7 @@
 <p>论文: <em>Topic Modeling in Embedding Spaces</em></p>
 <p>作者: Adji B. Dieng, Francisco J. R. Ruiz, David M. Blei</p>
 <p align="center">
-    <img src="assets/etm_arch.png" srcset="/img/loading.gif" width="720"\>
+    <img src="assets/etm_arch.png" width="720"\>
 </p>
 
 <h4 id="Description-9"><a href="#Description-9" class="headerlink" title="Description"></a>Description</h4><p><strong>VAE + Gaussian Softmax + Embedding</strong></p>
@@ -689,7 +660,7 @@
 <p>论文: <em>Research on Clustering for Subtitle Dialogue Text Based on Neural Topic Model</em></p>
 <p>作者: Leilan Zhang</p>
 <p align="center">
-    <img src="assets/gmvae_arch.png" srcset="/img/loading.gif" width="720"\>
+    <img src="assets/gmvae_arch.png" width="720"\>
 </p>
 
 <h4 id="Description-10"><a href="#Description-10" class="headerlink" title="Description"></a>Description</h4><p>模型结构基于<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1611.05148">VaDE</a>，该模型将高斯混合分布作为先验分布。 与WAE采用的Wasserstein距离不同，VaDE使用KL散度来度量先验分布和变分分布的差异。 它采用离散变量表示所属成分，采用连续变量表示隐空间中的向量。 GMNTM的初衷是通过引入多峰分布来提高模型的表示能力，以取代GSM中使用的单峰多元高斯分布。 从经验上讲，它确实比GSM获得了一系列更加多样化和连贯的主题。 但是，它存在模式崩溃问题，最终将导致一系列同类主题。 因此，训练过程不应太长，并且应在崩溃发生之前停止训练。我正在解决这一问题，改进后的模型随后会添加到新版本中。欢迎提供各种思路和建议。</p>
@@ -703,7 +674,7 @@
 <p>论文: <em>Neural Topic Modeling with Bidirectional Adversarial Training</em></p>
 <p>作者: Rui Wang, Xuemeng Hu, Deyu Zhou, Yulan He, Yuxuan Xiong, Chenchen Ye, Haiyang Xu</p>
 <p align="center">
-    <img src="assets/BATM_arch.png" srcset="/img/loading.gif" width="720"\>
+    <img src="assets/BATM_arch.png" width="720"\>
     <div align="center">
         (The picture is taken from the original <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2004.12331">paper</a>.)
     </div>
@@ -772,25 +743,25 @@
 <h6 id="cnews10k_exp-zh">3.1 cnews10k</h6>
 
 <p align="center">
-    <img src="assets/cnews10k_exp.png" srcset="/img/loading.gif" width="640"\>
+    <img src="assets/cnews10k_exp.png" width="640"\>
 </p>
 
 <h6 id="zhddline_exp-zh">3.2 zhddline</h6>
 
 <p align="center">
-    <img src="assets/zhddline_exp.png" srcset="/img/loading.gif" width="640"\>
+    <img src="assets/zhddline_exp.png" width="640"\>
 </p>
 
 <h6 id="zhdd_exp-zh">3.3 zhdd</h6>
 
 <p align="center">
-    <img src="assets/zhdd_exp.png" srcset="/img/loading.gif" width="720"\>
+    <img src="assets/zhdd_exp.png" width="720"\>
 </p>
 
 <h6 id="3body1_exp-zh">3.4 3body1</h6>
 
 <p align="center">
-    <img src="assets/3body1_exp.png" srcset="/img/loading.gif" width="720"\>
+    <img src="assets/3body1_exp.png" width="720"\>
 </p>
 
 
@@ -802,13 +773,13 @@
 
 <p>首先需要准备文本数据，<strong>一行作为一个文档</strong>。在示例zhddline中，每行是一句对话话语。</p>
 <p align="center">
-    <img src="assets/zhddline_exp_short.png" srcset="/img/loading.gif" width="640"\>
+    <img src="assets/zhddline_exp_short.png" width="640"\>
 </p>
 
 <p>然后将文本文件的名称修改为{taskname} _lines.txt，例如修改为“ zhddline_lines.txt”。 将修改后的文件放在“data”目录下。</p>
 <p>最后，<strong>选择合适的分词器</strong>（没有合适的就自己写一个）。 分词器应根据文本类型定制。默认配置使用HanLP作为分词器来处理现代汉语句子。 如果你需要处理其他类型的文本（如英语或古汉语），可打开文件<code>tokenization.py</code>，并修改<code>Tokenizer</code>函数的代码。</p>
 <p align="center">
-    <img src="assets/tokenizer_exp.png" srcset="/img/loading.gif" width="512"\>
+    <img src="assets/tokenizer_exp.png" width="512"\>
 </p>
 
 <h6 id="Run-zh">4.2 Run</h6>
@@ -818,7 +789,7 @@
 
 <p>模型每10个epoch后会评价主题的一致性和多样性，并显示每个主题的前20个主题词。训练完成后，模型的权重将存储在<code>ckpt</code>目录中。 主题建模的结果如下所示。</p>
 <p align="center">
-    <img src="assets/WLDA-GMM_zhddline10k.png" srcset="/img/loading.gif" width="auto"\>
+    <img src="assets/WLDA-GMM_zhddline10k.png" width="auto"\>
 </p>
 
 
@@ -848,235 +819,140 @@
 <span class="xml">&#125;</span></code></pre>
 
 
-            </div>
-            <hr>
-            <div>
-              <div class="post-metas mb-3">
-                
-                
-                  <div class="post-meta">
-                    <i class="iconfont icon-tags"></i>
-                    
-                      <a class="hover-with-bg" href="/tags/topic-model/">topic model</a>
-                    
-                  </div>
-                
-              </div>
-              
-                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
-              
-              
-                <div class="post-prevnext row">
-                  <article class="post-prev col-6">
-                    
-                    
-                      <a href="/2021/03/25/NLP%E6%95%B0%E6%8D%AE%E9%9B%86%E6%95%B4%E7%90%86/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">NLP数据集整理</span>
-                        <span class="visible-mobile">Previous</span>
-                      </a>
-                    
-                  </article>
-                  <article class="post-next col-6">
-                    
-                    
-                      <a href="/2020/08/27/Hexo%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E5%8F%8A%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/">
-                        <span class="hidden-mobile">Hexo博客搭建及使用指南</span>
-                        <span class="visible-mobile">Next</span>
-                        <i class="iconfont icon-arrowright"></i>
-                      </a>
-                    
-                  </article>
-                </div>
-              
-            </div>
+  </div>
+</article>
 
-            
-          </article>
-        </div>
-      </div>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
     </div>
-    
-      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
-        <div id="toc">
-  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;TOC</p>
-  <div id="tocbot"></div>
-</div>
 
-      </div>
-    
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#TOC_EN"><span class="toc-number">1.</span> <span class="toc-text">Table of Contents</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Installation"><span class="toc-number">2.</span> <span class="toc-text">1. Installation</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Models"><span class="toc-number">3.</span> <span class="toc-text">2. Models</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#NVDM-GSM"><span class="toc-number">3.1.</span> <span class="toc-text">2.1 NVDM-GSM</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Description"><span class="toc-number">3.1.1.</span> <span class="toc-text">Description</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Run-Example"><span class="toc-number">3.1.2.</span> <span class="toc-text">Run Example</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#WTM-MMD"><span class="toc-number">3.2.</span> <span class="toc-text">2.2 WTM-MMD</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Description-1"><span class="toc-number">3.2.1.</span> <span class="toc-text">Description</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Run-Example-1"><span class="toc-number">3.2.2.</span> <span class="toc-text">Run Example</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#WTM-GMM"><span class="toc-number">3.3.</span> <span class="toc-text">2.3 WTM-GMM</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Description-2"><span class="toc-number">3.3.1.</span> <span class="toc-text">Description</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Run-Example-2"><span class="toc-number">3.3.2.</span> <span class="toc-text">Run Example</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ETM"><span class="toc-number">3.4.</span> <span class="toc-text">2.4 ETM</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Description-3"><span class="toc-number">3.4.1.</span> <span class="toc-text">Description</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Run-Example-3"><span class="toc-number">3.4.2.</span> <span class="toc-text">Run Example</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GMNTM-VaDE"><span class="toc-number">3.5.</span> <span class="toc-text">2.5 GMNTM</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Description-4"><span class="toc-number">3.5.1.</span> <span class="toc-text">Description</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Run-Example-4"><span class="toc-number">3.5.2.</span> <span class="toc-text">Run Example</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#BATM"><span class="toc-number">3.6.</span> <span class="toc-text">2.6 BATM</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Description-5"><span class="toc-number">3.6.1.</span> <span class="toc-text">Description</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Run-Example-5"><span class="toc-number">3.6.2.</span> <span class="toc-text">Run Example</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Datasets"><span class="toc-number">4.</span> <span class="toc-text">3. Datasets</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Some-snippets"><span class="toc-number">4.0.0.1.</span> <span class="toc-text">Some snippets</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#cnews10k_exp"><span class="toc-number">4.0.0.1.1.</span> <span class="toc-text">3.1 cnews10k</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#zhddline_exp"><span class="toc-number">4.0.0.1.2.</span> <span class="toc-text">3.2 zhddline</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#zhdd_exp"><span class="toc-number">4.0.0.1.3.</span> <span class="toc-text">3.3 zhdd</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#3body1_exp"><span class="toc-number">4.0.0.1.4.</span> <span class="toc-text">3.4 3body1</span></a></li></ol></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Usage"><span class="toc-number">4.0.1.</span> <span class="toc-text">4. Usage</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#Preparation"><span class="toc-number">4.0.1.0.1.</span> <span class="toc-text">4.1 Preparation</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Run"><span class="toc-number">4.0.1.0.2.</span> <span class="toc-text">4.2 Run</span></a></li></ol></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Acknowledgement"><span class="toc-number">4.0.2.</span> <span class="toc-text">5. Acknowledgement</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#License"><span class="toc-number">4.0.3.</span> <span class="toc-text">License</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E5%BD%95"><span class="toc-number">5.</span> <span class="toc-text">目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TODO-zh"><span class="toc-number">6.</span> <span class="toc-text">TODO</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Installation-zh"><span class="toc-number">7.</span> <span class="toc-text">1. 安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Models-zh"><span class="toc-number">8.</span> <span class="toc-text">2. 模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#NVDM-GSM-zh"><span class="toc-number">8.1.</span> <span class="toc-text">2.1 NVDM-GSM</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Description-6"><span class="toc-number">8.1.1.</span> <span class="toc-text">Description</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Run-Example-6"><span class="toc-number">8.1.2.</span> <span class="toc-text">Run Example</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#WTM-MMD-zh"><span class="toc-number">8.2.</span> <span class="toc-text">2.2 WTM-MMD</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Description-7"><span class="toc-number">8.2.1.</span> <span class="toc-text">Description</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Run-Example-7"><span class="toc-number">8.2.2.</span> <span class="toc-text">Run Example</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#WTM-GMM-zh"><span class="toc-number">8.3.</span> <span class="toc-text">2.3 WTM-GMM</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Description-8"><span class="toc-number">8.3.1.</span> <span class="toc-text">Description</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Run-Example-8"><span class="toc-number">8.3.2.</span> <span class="toc-text">Run Example</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ETM-zh"><span class="toc-number">8.4.</span> <span class="toc-text">2.4 ETM</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Description-9"><span class="toc-number">8.4.1.</span> <span class="toc-text">Description</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Run-Example-9"><span class="toc-number">8.4.2.</span> <span class="toc-text">Run Example</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GMNTM-VaDE-zh"><span class="toc-number">8.5.</span> <span class="toc-text">2.5 GMNTM</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Description-10"><span class="toc-number">8.5.1.</span> <span class="toc-text">Description</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Run-Example-10"><span class="toc-number">8.5.2.</span> <span class="toc-text">Run Example</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#BATM-zh"><span class="toc-number">8.6.</span> <span class="toc-text">2.6 BATM</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Description-11"><span class="toc-number">8.6.1.</span> <span class="toc-text">Description</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Run-Example-11"><span class="toc-number">8.6.2.</span> <span class="toc-text">Run Example</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Datasets-zh"><span class="toc-number">9.</span> <span class="toc-text">3. 数据集</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#cnews10k_exp-zh"><span class="toc-number">9.0.0.0.1.</span> <span class="toc-text">3.1 cnews10k</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#zhddline_exp-zh"><span class="toc-number">9.0.0.0.2.</span> <span class="toc-text">3.2 zhddline</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#zhdd_exp-zh"><span class="toc-number">9.0.0.0.3.</span> <span class="toc-text">3.3 zhdd</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#3body1_exp-zh"><span class="toc-number">9.0.0.0.4.</span> <span class="toc-text">3.4 3body1</span></a></li></ol></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Usage-zh"><span class="toc-number">9.0.1.</span> <span class="toc-text">4. 使用教程</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#Preparation-zh"><span class="toc-number">9.0.1.0.1.</span> <span class="toc-text">4.1 Preparation</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Run-zh"><span class="toc-number">9.0.1.0.2.</span> <span class="toc-text">4.2 Run</span></a></li></ol></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Acknowledgement-zh"><span class="toc-number">9.0.2.</span> <span class="toc-text">5. Acknowledgement</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#License"><span class="toc-number">9.0.3.</span> <span class="toc-text">License</span></a></li></ol></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/&text=Introduction to Neural Topic Models"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/&title=Introduction to Neural Topic Models"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/&is_video=false&description=Introduction to Neural Topic Models"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Introduction to Neural Topic Models&body=Check out this article: https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/&title=Introduction to Neural Topic Models"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/&title=Introduction to Neural Topic Models"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/&title=Introduction to Neural Topic Models"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/&title=Introduction to Neural Topic Models"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/&name=Introduction to Neural Topic Models&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://zll17.github.io/2020/11/17/Introduction-to-Neural-Topic-Models/&t=Introduction to Neural Topic Models"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
   </div>
 </div>
 
-<!-- Custom -->
-
-
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
     
-  </main>
-
-  
-    <a id="scroll-top-button" href="#" role="button">
-      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
-    </a>
-  
-
-  
-    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
-     aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header text-center">
-        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
-        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body mx-3">
-        <div class="md-form mb-5">
-          <input type="text" id="local-search-input" class="form-control validate">
-          <label data-error="x" data-success="v"
-                 for="local-search-input">keyword</label>
-        </div>
-        <div class="list-group" id="local-search-result"></div>
-      </div>
-    </div>
+    
+    2016-2021
+    zhangleilan
   </div>
-</div>
-  
-
-  
-
-  
-
-  <footer class="mt-5">
-  <div class="text-center py-3">
-    <div>
-      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
-      <i class="iconfont icon-love"></i>
-      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
-        <span>Fluid</span></a>
-    </div>
-    
-
-    
-
-    
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </nav>
   </div>
 </footer>
 
-<!-- SCRIPTS -->
-<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
-<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
-<script  src="/js/debouncer.js" ></script>
-<script  src="/js/main.js" ></script>
+    </div>
+    <!-- styles -->
 
-<!-- Plugins -->
 
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
 
   
-    <script  src="/js/lazyload.js" ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
   
-
-
-
-  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
-  <script  src="/js/clipboard-use.js" ></script>
-
-
-
-
-
-
-
-  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
-  <script>
-    $(document).ready(function () {
-      var boardCtn = $('#board-ctn');
-      var boardTop = boardCtn.offset().top;
-
-      tocbot.init({
-        tocSelector: '#tocbot',
-        contentSelector: '#post-body',
-        headingSelector: 'h1,h2,h3,h4,h5,h6',
-        linkClass: 'tocbot-link',
-        activeLinkClass: 'tocbot-active-link',
-        listClass: 'tocbot-list',
-        isCollapsedClass: 'tocbot-is-collapsed',
-        collapsibleClass: 'tocbot-is-collapsible',
-        collapseDepth: 0,
-        scrollSmooth: true,
-        headingsOffset: -boardTop
-      });
-      if ($('.toc-list-item').length > 0) {
-        $('#toc').css('visibility', 'visible');
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
       }
     });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
   </script>
 
 
+<script src="/js/main.js"></script>
 
+<!-- search -->
 
+<!-- Google Analytics -->
 
-  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
-  <script>
-    anchors.options = {
-      placement: "right",
-      visible: "hover",
-      
-    };
-    var el = "h1,h2,h3,h4,h5,h6".split(",");
-    var res = [];
-    for (item of el) {
-      res.push(".markdown-body > " + item)
-    }
-    anchors.add(res.join(", "))
-  </script>
+<!-- Baidu Analytics -->
 
+<!-- Cloudflare Analytics -->
 
+<!-- Umami Analytics -->
 
-  <script  src="/js/local-search.js" ></script>
-  <script>
-    var path = "/local-search.xml";
-    var inputArea = document.querySelector("#local-search-input");
-    inputArea.onclick = function () {
-      searchFunc(path, 'local-search-input', 'local-search-result');
-      this.onclick = null
-    }
-  </script>
-
-
-
-  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
-
-  <script>
-    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
-      function () {
-        var element = document.createElement('a');
-        $(element).attr('data-fancybox', 'images');
-        $(element).attr('href', $(this).attr('src'));
-        $(this).wrap(element);
-      }
-    );
-  </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<!-- Disqus Comments -->
 
 
 </body>
