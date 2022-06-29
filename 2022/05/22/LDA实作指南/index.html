@@ -6,17 +6,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-    <meta name="description" content="LDA的动机和思路让我们从下面这张图讲起：  生成过程是按照一定的概率选择topic，再从对应topic中按照一定概率选择token；而推断过程则是给定了一些文档和其中的token，不知道每个token是由哪个topic生成，需要去推断每篇文档取自各个主题的概率，以及每个主题在抽出各个词的概率。 这个推断不能胡乱推断，而应该根据一定的假设进行，这个假设就是LDA的生成过程（这也是为什么许多介绍LD">
+    <meta name="description" content="LDA的动机和思路 让我们从下面这张图讲起：  生成过程是按照一定的概率选择topic，再从对应topic中按照一定概率选择token；而推断过程则是给定了一些文档和其中的token，不知道每个token是由哪个topic生成，需要去推断每篇文档取自各个主题的概率，以及每个主题在抽出各个词的概率。 这个推断不能胡乱推断，而应该根据一定的假设进行，这个假设就是LDA的生成过程（这也是为什么许多介绍L">
 <meta property="og:type" content="article">
 <meta property="og:title" content="LDA实作指南">
 <meta property="og:url" content="https://zll17.github.io/2022/05/22/LDA%E5%AE%9E%E4%BD%9C%E6%8C%87%E5%8D%97/index.html">
 <meta property="og:site_name" content="Leilan&#39;s Blog">
-<meta property="og:description" content="LDA的动机和思路让我们从下面这张图讲起：  生成过程是按照一定的概率选择topic，再从对应topic中按照一定概率选择token；而推断过程则是给定了一些文档和其中的token，不知道每个token是由哪个topic生成，需要去推断每篇文档取自各个主题的概率，以及每个主题在抽出各个词的概率。 这个推断不能胡乱推断，而应该根据一定的假设进行，这个假设就是LDA的生成过程（这也是为什么许多介绍LD">
+<meta property="og:description" content="LDA的动机和思路 让我们从下面这张图讲起：  生成过程是按照一定的概率选择topic，再从对应topic中按照一定概率选择token；而推断过程则是给定了一些文档和其中的token，不知道每个token是由哪个topic生成，需要去推断每篇文档取自各个主题的概率，以及每个主题在抽出各个词的概率。 这个推断不能胡乱推断，而应该根据一定的假设进行，这个假设就是LDA的生成过程（这也是为什么许多介绍L">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://zll17.github.io/2022/05/22/LDA%E5%AE%9E%E4%BD%9C%E6%8C%87%E5%8D%97/lda-01.png">
 <meta property="og:image" content="https://zll17.github.io/2022/05/22/LDA%E5%AE%9E%E4%BD%9C%E6%8C%87%E5%8D%97/lda-02.png">
 <meta property="article:published_time" content="2022-05-22T08:22:58.000Z">
-<meta property="article:modified_time" content="2022-06-29T12:33:47.933Z">
+<meta property="article:modified_time" content="2022-06-29T12:34:48.972Z">
 <meta property="article:author" content="zhangleilan">
 <meta property="article:tag" content="TopicModel EM算法 MCMC DIY">
 <meta name="twitter:card" content="summary">
@@ -164,7 +164,8 @@
   
 
   <div class="content" itemprop="articleBody">
-    <h4 id="LDA的动机和思路"><a href="#LDA的动机和思路" class="headerlink" title="LDA的动机和思路"></a>LDA的动机和思路</h4><p>让我们从下面这张图讲起：</p>
+    <h4 id="LDA的动机和思路">LDA的动机和思路</h4>
+<p>让我们从下面这张图讲起：</p>
 <img src="/2022/05/22/LDA%E5%AE%9E%E4%BD%9C%E6%8C%87%E5%8D%97/lda-01.png" class="" title="Topic Model的生成和推断过程">
 <p>生成过程是按照一定的概率选择topic，再从对应topic中按照一定概率选择token；而推断过程则是给定了一些文档和其中的token，不知道每个token是由哪个topic生成，需要去推断每篇文档取自各个主题的概率，以及每个主题在抽出各个词的概率。</p>
 <p>这个推断不能胡乱推断，而应该根据一定的假设进行，这个假设就是LDA的生成过程（这也是为什么许多介绍LDA的文章会在一开始就把LDA的生成过程写出来）。</p>
@@ -179,45 +180,55 @@
 <p>分别推导这两项：</p>
 <p>记$\theta_{mk}$是第$m$个文本生成第$k$个主题的概率，$n_{mk}$是语料库中第$m$的文本生成第$k$个主题的次数，</p>
 <p>第一项：</p>
-<script type="math/tex; mode=display">
-\begin{align*}
-p(\mathbf{z} \mid \alpha) &= 
-\int p(\mathbf{z} \mid \theta) p(\theta \mid \alpha) \mathrm{d} \theta \\\\
-&=\int \prod_{m=1}^{M} \frac{1}{\mathrm{~B}(\alpha)} \prod_{k=1}^{K} \theta_{m k}^{n_{m k}+\alpha_{k}-1} \mathrm{~d} \theta \\\\
-&=\prod_{m=1}^{M} \frac{1}{\mathrm{~B}(\alpha)} \int \prod_{k=1}^{K} \theta_{m k}^{n_{m k}+\alpha_{k}-1} \mathrm{~d} \theta \\\\
-&=\prod_{m=1}^{M} \frac{\mathrm{B}\left(n_{m}+\alpha\right)}{\mathrm{B}(\alpha)} \\\\
-\end{align*}</script><p>，</p>
+<p>$$<br>
+\begin{align*}<br>
+p(\mathbf{z} \mid \alpha) &amp;=<br>
+\int p(\mathbf{z} \mid \theta) p(\theta \mid \alpha) \mathrm{d} \theta \\<br>
+&amp;=\int \prod_{m=1}^{M} \frac{1}{\mathrm{~B}(\alpha)} \prod_{k=1}^{K} \theta_{m k}^{n_{m k}+\alpha_{k}-1} \mathrm{~d} \theta \\<br>
+&amp;=\prod_{m=1}^{M} \frac{1}{\mathrm{~B}(\alpha)} \int \prod_{k=1}^{K} \theta_{m k}^{n_{m k}+\alpha_{k}-1} \mathrm{~d} \theta \\<br>
+&amp;=\prod_{m=1}^{M} \frac{\mathrm{B}\left(n_{m}+\alpha\right)}{\mathrm{B}(\alpha)} \\<br>
+\end{align*}<br>
+$$<br>
+，</p>
 <p>(此处$p(\mathbf{z} \mid \theta) = \prod_{m=1}^{M} \prod_{k=1}^{K} \theta_{m k}^{n_{m k}}$，而由假设：$\theta$服从参数为$\alpha$的Dirichlet分布，因此$\theta$的先验分布$p(\theta \mid \alpha)=\frac{\Gamma\left(\sum_{i=1}^{k} \alpha_{i}\right)}{\prod_{i=1}^{k} \Gamma\left(\alpha_{i}\right)} \prod_{i=1}^{k} \theta_{i}^{\alpha_{i}-1}=\frac{1}{\mathrm{~B}(\alpha)} \prod_{i=1}^{k} \theta_{i}^{\alpha_{i}-1}=\operatorname{Dir}(\theta \mid \alpha)$，推导参考[1])。</p>
 <p>第二项：</p>
-<script type="math/tex; mode=display">
-\begin{align*}
-p(\mathbf{w} \mid \mathbf{z}, \beta) &=\int p(\mathbf{w} \mid \mathbf{z}, \varphi) p(\varphi \mid \beta) \mathrm{d} \varphi \\\\
-&=\int \prod_{k=1}^{K} \frac{1}{\mathrm{~B}(\beta)} \prod_{v=1}^{V} \varphi_{k v}^{n_{k v}+\beta_{v}-1} \mathrm{~d} \varphi \\\\
-&=\prod_{k=1}^{K} \frac{1}{\mathrm{~B}(\beta)} \int \prod_{v=1}^{V} \varphi_{k v}^{n_{k v}+\beta_{v}-1} \mathrm{~d} \varphi \\\\
-&=\prod_{k=1}^{K} \frac{\mathrm{B}\left(n_{k}+\beta\right)}{\mathrm{B}(\beta)}
-\end{align*}</script><p>，</p>
+<p>$$<br>
+\begin{align*}<br>
+p(\mathbf{w} \mid \mathbf{z}, \beta) &amp;=\int p(\mathbf{w} \mid \mathbf{z}, \varphi) p(\varphi \mid \beta) \mathrm{d} \varphi \\<br>
+&amp;=\int \prod_{k=1}^{K} \frac{1}{\mathrm{~B}(\beta)} \prod_{v=1}^{V} \varphi_{k v}^{n_{k v}+\beta_{v}-1} \mathrm{~d} \varphi \\<br>
+&amp;=\prod_{k=1}^{K} \frac{1}{\mathrm{~B}(\beta)} \int \prod_{v=1}^{V} \varphi_{k v}^{n_{k v}+\beta_{v}-1} \mathrm{~d} \varphi \\<br>
+&amp;=\prod_{k=1}^{K} \frac{\mathrm{B}\left(n_{k}+\beta\right)}{\mathrm{B}(\beta)}<br>
+\end{align*}<br>
+$$<br>
+，</p>
 <p>其中$n_{k}=(n_{k1},n_{k2},\dots,n_{kV})$，（此处$p(\mathbf{w} \mid \mathbf{w}, \phi) = \prod_{k=1}^{K} \prod_{v=1}^{V} \phi_{kv}^{n_{kv}}$，同样由假设：$\phi$服从参数为$\beta$的Dirichlet分布，因此$\phi$的先验分布$p(\phi_{k} \mid \beta)=\frac{\Gamma\left(\sum_{i=1}^{V} \beta_{i}\right)}{\prod_{i=1}^{V} \Gamma\left(\beta_{i}\right)} \prod_{v=1}^{V} \phi_{kv}^{\beta_{v}-1}=\frac{1}{\mathrm{~B}(\beta)} \prod_{v=1}^{V} \phi_{kv}^{\beta_{v}-1}=\operatorname{Dir}(\phi \mid \beta))$）</p>
 <p>可知：$p(\textbf{z},\textbf{w}|\alpha,\beta)=\prod_{d}\frac{B(n_{d,.}+\alpha)}{B(\alpha)} \prod_{k}\frac{B(n_{k,.}+\beta)}{B(\beta)}$，即$p(\textbf{z} |\textbf{w},\alpha,\beta) \propto \prod_{d}\frac{B(n_{d,.}+\alpha)}{B(\alpha)} \prod_{k}\frac{B(n_{k,.}+\beta)}{B(\beta)}$</p>
 <p>于是我们可以据上式采样$p(\textbf{z}|\textbf{w},\alpha,\beta)$。直接采样是可以的，但高维空间效率极低，因此可以Gimbbs采样，一维一维地采，因此需要估计$p(z_{i}|\textbf{z}_{-i},\textbf{w},\alpha,\beta)$，易知：</p>
-<script type="math/tex; mode=display">
-\begin{equation}
-p(z_{i}|\textbf{z}_{-i},\textbf{w},\alpha,\beta) 
-=\frac{p(z_{i},\textbf{z}_{-i}|\textbf{w},\alpha,\beta)}{p(\textbf{z}_{-i}|\textbf{w},\alpha,\beta)} 
-=\frac{p(\textbf{z}|\textbf{w},\alpha,\beta)}{p(\textbf{z}_{-i}|\textbf{w},\alpha,\beta)}
-\end{equation}</script><p>，</p>
-<p>分母 $p(\textbf{z}_{-i},\textbf{w},\alpha,\beta)$ 记作$Z_{i}$，$Z_{i}$为将位置$i$处的主题排除后的边缘概率，注意到$Z_{i}$与$z_{i}$的取值无关（因为$z_{i}$被排除了），即 $Z_{zi=t1}=Z_{zi=t2}(t1 \neq t2)$ ，因此</p>
-<p>$p(z_{i}|\textbf{z}_{-i},\textbf{w},\alpha,\beta)=\frac{p(\textbf{z}|\textbf{w},\alpha,\beta)}{Z_{i}} \propto p(\textbf{z} | \textbf{w},\alpha,\beta) \propto \prod_{d}\frac{B(n_{d,.}+\alpha)}{B(\alpha)} \prod_{k}\frac{B(n_{k,.}+\beta)}{B(\beta)}$</p>
-<p>即 $p(z_{i}|\textbf{z}_{-i},\textbf{w},\alpha,\beta) \propto \frac{n_{kv}+\beta_{v}}{\sum_{v=1}^{V}(n_{kv}+\beta_{v})} \frac{n_{mk}+\alpha_{k}}{\sum_{k=1}^{K}(n_{mk}+\alpha_{k})}$，（此步骤推断可参考文献<sup><a href="#fn_2" id="reffn_2">2</a></sup>P35）</p>
+<p>$$<br>
+\begin{equation}<br>
+p(z_{i}|\textbf{z}<em>{-i},\textbf{w},\alpha,\beta)<br>
+=\frac{p(z</em>{i},\textbf{z}<em>{-i}|\textbf{w},\alpha,\beta)}{p(\textbf{z}</em>{-i}|\textbf{w},\alpha,\beta)}<br>
+=\frac{p(\textbf{z}|\textbf{w},\alpha,\beta)}{p(\textbf{z}_{-i}|\textbf{w},\alpha,\beta)}<br>
+\end{equation}<br>
+$$<br>
+，</p>
+<p>分母 $p(\textbf{z}<em>{-i},\textbf{w},\alpha,\beta)$ 记作$Z</em>{i}$，$Z_{i}$为将位置$i$处的主题排除后的边缘概率，注意到$Z_{i}$与$z_{i}$的取值无关（因为$z_{i}$被排除了），即 $Z_{zi=t1}=Z_{zi=t2}(t1 \neq t2)$ ，因此</p>
+<p>$p(z_{i}|\textbf{z}<em>{-i},\textbf{w},\alpha,\beta)=\frac{p(\textbf{z}|\textbf{w},\alpha,\beta)}{Z</em>{i}} \propto p(\textbf{z} | \textbf{w},\alpha,\beta) \propto \prod_{d}\frac{B(n_{d,.}+\alpha)}{B(\alpha)} \prod_{k}\frac{B(n_{k,.}+\beta)}{B(\beta)}$</p>
+<p>即 $p(z_{i}|\textbf{z}<em>{-i},\textbf{w},\alpha,\beta) \propto \frac{n</em>{kv}+\beta_{v}}{\sum_{v=1}^{V}(n_{kv}+\beta_{v})} \frac{n_{mk}+\alpha_{k}}{\sum_{k=1}^{K}(n_{mk}+\alpha_{k})}$，（此步骤推断可参考文献[^2]P35）</p>
 <p>到这里，LDA的Gibbs采样算法就呼之欲出了：</p>
-<p>（以下摘自李航《统计学习方法》<sup><a href="#fn_1" id="reffn_1">1</a></sup>）</p>
+<p>（以下摘自李航《统计学习方法》[^1]）</p>
 <ul>
-<li><p>Input：语料库的单词序列$\textbf{w}=\{\textbf{w}_{1},\textbf{w}_{2},\dots,\textbf{w}_{M}\}$,</p>
+<li>
+<p>Input：语料库的单词序列$\textbf{w}={\textbf{w}<em>{1},\textbf{w}</em>{2},\dots,\textbf{w}_{M}}$,</p>
 </li>
-<li><p>Output: 语料库的主题序列$\textbf{z}=\{\textbf{z}_{1},\textbf{z}_{2},\dots,\textbf{z}_{M}\}$，估计模型参数$\theta$和$\phi$。</p>
+<li>
+<p>Output: 语料库的主题序列$\textbf{z}={\textbf{z}<em>{1},\textbf{z}</em>{2},\dots,\textbf{z}_{M}}$，估计模型参数$\theta$和$\phi$。</p>
 </li>
-<li><p>超参数：主题数$K$，Dirichlet参数$\alpha$和$\beta$。</p>
+<li>
+<p>超参数：主题数$K$，Dirichlet参数$\alpha$和$\beta$。</p>
 </li>
-<li><p>初始化：</p>
+<li>
+<p>初始化：</p>
 <ul>
 <li>“文档-主题”计数矩阵记为$C_{MK}$，其元素$C_{mk}$表示文档$m$中主题$k$的出现次数</li>
 <li>“主题-词”计数矩阵记为$P_{KV}$，其元素$P_{kv}$表示主题$k$中单词$v$的出现次数</li>
@@ -226,27 +237,28 @@ p(z_{i}|\textbf{z}_{-i},\textbf{w},\alpha,\beta)
 </ul>
 <p>以上变量均初始化为0，接着执行以下步骤：</p>
 <p>对所有文档$\textbf{w}_{m}$:</p>
-<p>​        对该文档中的所有单词$w_{mn},(n=1,2,\dots,N_{m})$：</p>
-<p>​                基于多项分布抽样主题$z_{mn}=z_{k}\sim Mult(\frac{1}{K})$</p>
-<p>​                $C_{mk} += 1$, $C_{m}+=1$, $P_{kv}+=1$, $P_{k}+=1$</p>
+<p>​		对该文档中的所有单词$w_{mn},(n=1,2,\dots,N_{m})$：</p>
+<p>​				基于多项分布抽样主题$z_{mn}=z_{k}\sim Mult(\frac{1}{K})$</p>
+<p>​				$C_{mk} += 1$, $C_{m}+=1$, $P_{kv}+=1$, $P_{k}+=1$</p>
 </li>
-<li><p>学习：</p>
+<li>
+<p>学习：</p>
 <p>对所有文档$\textbf{w}_{m}$：</p>
-<p>​        对该文档中的所有单词$w_{mn}$：</p>
-<p>​            设当前单词在词表中索引为$v$，所分配的主题$z_{mn}$的主题索引为$k$</p>
-<p>​            $C_{mk} -= 1$, $C_{m}-=1$, $P_{kv}-=1$, $P_{k}-=1$</p>
-<p>​            根据条件分布进行抽样：</p>
-<p>$p(z_{i}|\textbf{z}_{-i},\textbf{w},\alpha,\beta) \propto \frac{n_{kv}+\beta_{v}}{\sum_{v=1}^{V}(n_{kv}+\beta_{v})} \frac{n_{mk}+\alpha_{k}}{\sum_{k=1}^{K}(n_{mk}+\alpha_{k})}$，</p>
-<p>​            设抽样得到主题$k^{\prime}$，令$z_{mn}=k^{\prime}$，</p>
-<p>​            $C_{mk^{\prime}} += 1$, $C_{m}+=1$, $P_{k^{\prime}v}+=1$, $P_{k^{\prime}}+=1$</p>
+<p>​		对该文档中的所有单词$w_{mn}$：</p>
+<p>​			设当前单词在词表中索引为$v$，所分配的主题$z_{mn}$的主题索引为$k$</p>
+<p>​			$C_{mk} -= 1$, $C_{m}-=1$, $P_{kv}-=1$, $P_{k}-=1$</p>
+<p>​			根据条件分布进行抽样：</p>
+<p>$p(z_{i}|\textbf{z}<em>{-i},\textbf{w},\alpha,\beta) \propto \frac{n</em>{kv}+\beta_{v}}{\sum_{v=1}^{V}(n_{kv}+\beta_{v})} \frac{n_{mk}+\alpha_{k}}{\sum_{k=1}^{K}(n_{mk}+\alpha_{k})}$，</p>
+<p>​			设抽样得到主题$k^{\prime}$，令$z_{mn}=k^{\prime}$，</p>
+<p>​			$C_{mk^{\prime}} += 1$, $C_{m}+=1$, $P_{k^{\prime}v}+=1$, $P_{k^{\prime}}+=1$</p>
 <p>重复上述步骤，直至度过燃烧期，当收敛后，得到$\textbf{z}$的若干样本，于是可以据此估计参数$\theta$和$\phi$，注意是用分布的期望进行的估计，</p>
 </li>
 </ul>
 <p>最终得到$\theta_{mk}=\frac{n_{mk}+\alpha_{k}}{\sum_{k=1}^{K}(n_{mk}+\alpha_{k})}$，以及 $\phi_{kv}=\frac{n_{kv}+\beta_{v}}{\sum_{v=1}^{V}(n_{kv}+\beta_{v})}$。</p>
-<p>​        算法完毕。</p>
+<p>​		算法完毕。</p>
 <p>当有新文档来时，保留$\phi$，如上更新$\theta$，得到文档的主题分布。</p>
 <p>估计参数$\theta$时，由LDA的定义，有</p>
-<p>$p\left(\theta_{m} \mid \mathbf{z}_{m}, \alpha\right)=\frac{1}{Z_{\theta_{m}}} \prod_{n=1}^{N_{m}} p\left(z_{m n} \mid \theta_{m}\right) p\left(\theta_{m} \mid \alpha\right)=\operatorname{Dir}\left(\theta_{m} \mid n_{m}+\alpha\right)$，由Dirichlet分布的性质（参考[2]）,得到</p>
+<p>$p\left(\theta_{m} \mid \mathbf{z}<em>{m}, \alpha\right)=\frac{1}{Z</em>{\theta_{m}}} \prod_{n=1}^{N_{m}} p\left(z_{m n} \mid \theta_{m}\right) p\left(\theta_{m} \mid \alpha\right)=\operatorname{Dir}\left(\theta_{m} \mid n_{m}+\alpha\right)$，由Dirichlet分布的性质（参考[2]）,得到</p>
 <p>$\theta_{mk}=\frac{n_{mk}+\alpha_{k}}{\sum_{k=1}^{K}(n_{mk}+\alpha_{k})}$,</p>
 <p>估计参数$\phi$时，有</p>
 <p>$p\left(\varphi_{k} \mid \mathbf{w}, \mathbf{z}, \beta\right)=\frac{1}{Z_{\varphi_{k}}} \prod_{i=1}^{I} p\left(w_{i} \mid \varphi_{k}\right) p\left(\varphi_{k} \mid \beta\right)=\operatorname{Dir}\left(\varphi_{k} \mid n_{k}+\beta\right)$，同样由Dirichlet分布的性质，得到</p>
@@ -267,7 +279,8 @@ p(z_{i}|\textbf{z}_{-i},\textbf{w},\alpha,\beta)
 <p>让我们将模型应用到TNEWS上，迭代次数设定为100次，查看模型对文档主题分布$\theta$的推断，以及权重top20的主题词。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    N_Iter = <span class="number">100</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;Train on trn data ...&#x27;</span>)</span><br><span class="line">    lda_model = LDA(docs=trn_tokenized_docs,K=<span class="number">20</span>)</span><br><span class="line">    lda_model.train(n_iter=N_Iter)</span><br><span class="line">    tp_wd_dist = lda_model.topic_word_dist() <span class="comment"># return [K,V] matrix</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;tp_wd_dist:&#x27;</span>,tp_wd_dist)</span><br><span class="line">    lda_model.show_topic_words(n=<span class="number">20</span>)</span><br><span class="line">    doc_tp_dist = lda_model.get_corpus_dist() <span class="comment"># return [M,K] matrix, where M = # of all the docs have feed in.</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;doc_tp_dist:&#x27;</span>,doc_tp_dist)</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;=&#x27;</span>*<span class="number">40</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;Add Dev data&#x27;</span>)</span><br><span class="line">    lda_model.add_docs(dev_tokenized_docs,n_iter=N_Iter)</span><br><span class="line">    tp_wd_dist = lda_model.topic_word_dist() <span class="comment"># return [K,V] matrix</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;tp_wd_dist:&#x27;</span>,tp_wd_dist)</span><br><span class="line">    lda_model.show_topic_words(n=<span class="number">20</span>)</span><br><span class="line">    doc_tp_dist = lda_model.get_corpus_dist() <span class="comment"># return [M,K] matrix, where M = # of all the docs have feed in.</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;doc_tp_dist:&#x27;</span>,doc_tp_dist)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;=&#x27;</span>*<span class="number">40</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;Inference on Test data&#x27;</span>)</span><br><span class="line">    doc_tp_dist = lda_model.batch_inference(tst_tokenized_docs,n_iter=N_Iter) <span class="comment"># return [M&#x27;,K] matrix, where M&#x27; = # of new_tokenized_docs</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;doc_tp_dist:&#x27;</span>,doc_tp_dist)</span><br><span class="line">    new_tokenized_doc = tst_tokenized_docs[<span class="number">17</span>]</span><br><span class="line">    tp_dist = lda_model.inference(new_tokenized_doc,n_iter=N_Iter) <span class="comment"># return [K] vector</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;tp_dist:&#x27;</span>,tp_dist)</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">&gt;python LDA.py</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Train on trn data ...</span></span><br><span class="line"><span class="string">Vocabulary length: 4771</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">tp_wd_dist: [[6.29428422e-07 6.29428422e-07 6.29428422e-07 ... 6.29428422e-07</span></span><br><span class="line"><span class="string">  6.29428422e-07 6.29428422e-07]</span></span><br><span class="line"><span class="string"> [5.68020771e-07 5.68020771e-07 5.68020771e-07 ... 2.71059512e-03</span></span><br><span class="line"><span class="string">  5.68020771e-07 5.68020771e-07]</span></span><br><span class="line"><span class="string"> [5.64958665e-07 5.64958665e-07 4.58226674e-02 ... 5.64958665e-07</span></span><br><span class="line"><span class="string">  5.64958665e-07 5.64958665e-07]</span></span><br><span class="line"><span class="string"> ...</span></span><br><span class="line"><span class="string"> [4.93175682e-07 4.93175682e-07 4.93175682e-07 ... 4.93175682e-07</span></span><br><span class="line"><span class="string">  4.93175682e-07 4.93175682e-07]</span></span><br><span class="line"><span class="string"> [5.22692431e-07 5.22692431e-07 5.22692431e-07 ... 5.22692431e-07</span></span><br><span class="line"><span class="string">  5.22692431e-07 5.22692431e-07]</span></span><br><span class="line"><span class="string"> [4.69954405e-07 4.69954405e-07 4.69954405e-07 ... 4.69954405e-07</span></span><br><span class="line"><span class="string">  4.69954405e-07 4.69954405e-07]]</span></span><br><span class="line"><span class="string">  </span></span><br><span class="line"><span class="string">[&#x27;年*0.0360367&#x27;, &#x27;美国*0.0240247&#x27;, &#x27;创新*0.0150156&#x27;, &#x27;房产*0.0150156&#x27;, &#x27;影响*0.0150156&#x27;, &#x27;能力*0.0120126&#x27;, &#x27;文化*0.0120126&#x27;, &#x27;一个*0.0120126&#x27;, &#x27;评价*0.0120126&#x27;, &#x27;飞*0.0090096&#x27;, &#x27;国*0.0090096&#x27;, &#x27;娶*0.0090096&#x27;, &#x27;Q*0.0090096&#x27;, &#x27;辆*0.0090096&#x27;, &#x27;计划*0.0090096&#x27;, &#x27;世界杯*0.0090096&#x27;, &#x27;基地*0.0090096&#x27;, &#x27;装备*0.0090096&#x27;, &#x27;到来*0.0090096&#x27;, &#x27;人性*0.0090096&#x27;]</span></span><br><span class="line"><span class="string">[&#x27;四*0.0298109&#x27;, &#x27;媒体*0.0162607&#x27;, &#x27;建设*0.0162607&#x27;, &#x27;楼市*0.0135507&#x27;, &#x27;时间*0.0135507&#x27;, &#x27;小镇*0.0135507&#x27;, &#x27;西方*0.0108407&#x27;, &#x27;成功*0.0108407&#x27;, &#x27;时刻*0.0108407&#x27;, &#x27;比特币*0.0108407&#x27;, &#x27;爱*0.0108407&#x27;, &#x27;首届*0.0108407&#x27;, &#x27;赚钱*0.0108407&#x27;, &#x27;农民*0.0108407&#x27;, &#x27;没*0.0108407&#x27;, &#x27;大战*0.0081306&#x27;, &#x27;机遇*0.0081306&#x27;, &#x27;沪</span></span><br><span class="line"><span class="string">*0.0081306&#x27;, &#x27;信*0.0081306&#x27;, &#x27;专家*0.0081306&#x27;]</span></span><br><span class="line"><span class="string">[&#x27;中*0.0512135&#x27;, &#x27;手机*0.0458227&#x27;, &#x27;太*0.0269547&#x27;, &#x27;詹姆斯*0.0188685&#x27;, &#x27;送*0.0161731&#x27;, &#x27;科技*0.0134777&#x27;, &#x27;里*0.0134777&#x27;, &#x27;问题*0.0134777&#x27;, &#x27;已经*0.0134777&#x27;, &#x27;不能*0.0134777&#x27;, &#x27;家长*0.0107822&#x27;, &#x27;万*0.0107822&#x27;, &#x27;万元*0.0107822&#x27;, &#x27;路*0.0107822&#x27;, &#x27;学会*0.0107822&#x27;, &#x27;项*0.0107822&#x27;, &#x27;农业*0.0080868&#x27;, &#x27;制造*0.0080868&#x27;, &#x27;幸福*0.0080868&#x27;, &#x27;思考*0.0080868&#x27;]</span></span><br><span class="line"><span class="string">[&#x27;一个*0.0488894&#x27;, &#x27;中国*0.0444449&#x27;, &#x27;三*0.0288894&#x27;, &#x27;旅游*0.0266671&#x27;, &#x27;新*0.0244449&#x27;, &#x27;更*0.0200005&#x27;, &#x27;没有*0.0200005&#x27;, &#x27;即将*0.0177782&#x27;, &#x27;经济*0.0133338&#x27;, &#x27;重要*0.0111116&#x27;, &#x27;产品*0.0111116&#x27;, &#x27;喜欢*0.0111116&#x27;, &#x27;老*0.0111116&#x27;, &#x27;实力*0.0111116&#x27;, &#x27;司机*0.0111116&#x27;, &#x27;曝光*0.0111116&#x27;, &#x27;请*0.0111116&#x27;, &#x27;产业*0.0088894&#x27;, &#x27;品牌*0.0088894&#x27;, &#x27;难道*0.0088894&#x27;]</span></span><br><span class="line"><span class="string">[&#x27;两*0.0474045&#x27;, &#x27;做*0.0316032&#x27;, &#x27;款*0.0248312&#x27;, &#x27;王者*0.0203165&#x27;, &#x27;俄*0.0180592&#x27;, &#x27;开*0.0158018&#x27;, &#x27;地球*0.0135445&#x27;, &#x27;推荐*0.0135445&#x27;, &#x27;孩子*0.0135445&#x27;, </span></span><br><span class="line"><span class="string">&#x27;成*0.0112872&#x27;, &#x27;投资*0.0112872&#x27;, &#x27;值得*0.0112872&#x27;, &#x27;要求*0.0112872&#x27;, &#x27;谢娜*0.0090298&#x27;, &#x27;区别*0.0090298&#x27;, &#x27;首发*0.0090298&#x27;, &#x27;重*0.0090298&#x27;, &#x27;型*0.0090298&#x27;, &#x27;见过*0.0090298&#x27;, &#x27;先*0.0090298&#x27;]</span></span><br><span class="line"><span class="string">[&#x27;现在*0.0473543&#x27;, &#x27;历史*0.0222847&#x27;, &#x27;房价*0.0167137&#x27;, &#x27;儿子*0.0167137&#x27;, &#x27;进*0.0167137&#x27;, &#x27;举行*0.0167137&#x27;, &#x27;元*0.0139282&#x27;, &#x27;发*0.0111426&#x27;, &#x27;梦*0.0111426&#x27;, &#x27;航母*0.0111426&#x27;, &#x27;联想*0.0083571&#x27;, &#x27;逆袭*0.0083571&#x27;, &#x27;周*0.0083571&#x27;, &#x27;旗*0.0083571&#x27;, &#x27;行情*0.0083571&#x27;, &#x27;红毯*0.0083571&#x27;, &#x27;再次*0.0083571&#x27;, &#x27;收入*0.0083571&#x27;, &#x27;现场*0.0083571&#x27;, &#x27;风险*0.0083571&#x27;]</span></span><br><span class="line"><span class="string">[&#x27;五*0.0294845&#x27;, &#x27;到底*0.0196565&#x27;, &#x27;网友*0.0171995&#x27;, &#x27;核*0.0171995&#x27;, &#x27;协议*0.0147425&#x27;, &#x27;小米*0.0147425&#x27;, &#x27;联*0.0147425&#x27;, &#x27;地方*0.0147425&#x27;, &#x27;微信*0.0122855&#x27;, &#x27;亿*0.0122855&#x27;, &#x27;伊*0.0122855&#x27;, &#x27;｜*0.0122855&#x27;, &#x27;融资*0.0122855&#x27;, &#x27;出现*0.0098285&#x27;, &#x27;爆*0.0098285&#x27;, &#x27;好玩*0.0098285&#x27;, &#x27;阿里巴巴*0.0098285&#x27;, &#x27;改变*0.0098285&#x27;, &#x27;教*0.0098285&#x27;, &#x27;申请*0.0098285&#x27;]</span></span><br><span class="line"><span class="string">[&#x27;」*0.0329119&#x27;, &#x27;第一*0.0303803&#x27;, &#x27;特朗普*0.0303803&#x27;, &#x27;岁*0.0253170&#x27;, &#x27;成功*0.0151904&#x27;, &#x27;复*0.0151904&#x27;, &#x27;上市*0.0126588&#x27;, &#x27;油*0.0126588&#x27;, &#x27;跑*0.0126588&#x27;, &#x27;称*0.0126588&#x27;, &#x27;印度*0.0101271&#x27;, &#x27;智能*0.0101271&#x27;, &#x27;电*0.0101271&#x27;, &#x27;接*0.0101271&#x27;, &#x27;参加*0.0101271&#x27;, &#x27;进口*0.0101271&#x27;, &#x27;电子*0.0101271&#x27;, &#x27;上映*0.0075955&#x27;, &#x27;获得*0.0075955&#x27;, &#x27;号*0.0075955&#x27;]</span></span><br><span class="line"><span class="string">[&#x27;会*0.0410262&#x27;, &#x27;说*0.0333339&#x27;, &#x27;使用*0.0179493&#x27;, &#x27;位*0.0179493&#x27;, &#x27;买房*0.0128211&#x27;, &#x27;月*0.0128211&#x27;, &#x27;终于*0.0128211&#x27;, &#x27;便宜*0.0128211&#x27;, &#x27;价格*0.0128211&#x27;, &#x27;卡*0.0128211&#x27;, &#x27;低*0.0102569&#x27;, &#x27;酒*0.0102569&#x27;, &#x27;主播*0.0102569&#x27;, &#x27;苹果*0.0102569&#x27;, &#x27;腿*0.0076928&#x27;, &#x27;游*0.0076928&#x27;, &#x27;高校*0.0076928&#x27;, &#x27;竟然*0.0076928&#x27;, &#x27;晋级*0.0076928&#x27;, &#x27;分*0.0076928&#x27;]</span></span><br><span class="line"><span class="string">[&#x27;亿*0.0453339&#x27;, &#x27;美*0.0373339&#x27;, &#x27;点*0.0320006&#x27;, &#x27;没*0.0186672&#x27;, &#x27;事件*0.0160006&#x27;, &#x27;事*0.0160006&#x27;, &#x27;版*0.0133339&#x27;, &#x27;发明*0.0133339&#x27;, &#x27;走*0.0133339&#x27;, &#x27;猪*0.0133339&#x27;, &#x27;恒大*0.0106672&#x27;, &#x27;手游*0.0106672&#x27;, &#x27;怒*0.0106672&#x27;, &#x27;角色*0.0106672&#x27;, &#x27;取消*0.0106672&#x27;, &#x27;无数*0.0106672&#x27;, &#x27;导弹*0.0106672&#x27;, &#x27;响*0.0106672&#x27;, &#x27;穿*0.0080006&#x27;, &#x27;海南*0.0080006&#x27;]</span></span><br><span class="line"><span class="string">[&#x27;中国*0.0316032&#x27;, &#x27;看待*0.0316032&#x27;, &#x27;俄罗斯*0.0293458&#x27;, &#x27;学生*0.0225738&#x27;, &#x27;发展*0.0203165&#x27;, &#x27;级*0.0203165&#x27;, &#x27;里*0.0203165&#x27;, &#x27;老师*0.0180592&#x27;, &#x27;知道*0.0158018&#x27;, &#x27;普京*0.0158018&#x27;, &#x27;种*0.0158018&#x27;, &#x27;是否*0.0158018&#x27;, &#x27;生活*0.0158018&#x27;, &#x27;轮*0.0135445&#x27;, &#x27;公司*0.0135445&#x27;, &#x27;古代*0.0135445&#x27;, &#x27;这种*0.0135445&#x27;, &#x27;片*0.0112872&#x27;, &#x27;最好*0.0112872&#x27;, &#x27;故事*0.0112872&#x27;]</span></span><br><span class="line"><span class="string">[&#x27;荣耀*0.0243249&#x27;, &#x27;比较*0.0243249&#x27;, &#x27;教育*0.0216222&#x27;, &#x27;首*0.0189195&#x27;, &#x27;应该*0.0162168&#x27;, &#x27;全球*0.0162168&#x27;, &#x27;国产*0.0162168&#x27;, &#x27;G*0.0135141&#x27;, &#x27;数据*0.0135141&#x27;, &#x27;行业*0.0135141&#x27;, &#x27;半*0.0108114&#x27;, &#x27;一战*0.0108114&#x27;, &#x27;反*0.0108114&#x27;, &#x27;南昌*0.0108114&#x27;, &#x27;偶遇*0.0081087&#x27;, &#x27;公布*0.0081087&#x27;, &#x27;大爷*0.0081087&#x27;, &#x27;听说*0.0081087&#x27;, &#x27;发声*0.0081087&#x27;, &#x27;创*0.0081087&#x27;]</span></span><br><span class="line"><span class="string">[&#x27;年*0.0725005&#x27;, &#x27;十*0.0475005&#x27;, &#x27;日本*0.0400005&#x27;, &#x27;汽车*0.0150005&#x27;, &#x27;项目*0.0150005&#x27;, &#x27;银行*0.0125005&#x27;, &#x27;选择*0.0125005&#x27;, &#x27;实现*0.0125005&#x27;, &#x27;晒*0.0125005&#x27;, &#x27;地震*0.0125005&#x27;, &#x27;女友*0.0100005&#x27;, &#x27;国内*0.0100005&#x27;, &#x27;山*0.0100005&#x27;, &#x27;德国*0.0100005&#x27;, &#x27;结婚*0.0100005&#x27;, &#x27;微博*0.0100005&#x27;, &#x27;张*0.0100005&#x27;, &#x27;富士康*0.0075005&#x27;, &#x27;史上*0.0075005&#x27;, &#x27;互联网*0.0075005&#x27;]</span></span><br><span class="line"><span class="string">[&#x27;会*0.0232564&#x27;, &#x27;A*0.0206724&#x27;, &#x27;比赛*0.0155044&#x27;, &#x27;原来*0.0129204&#x27;, &#x27;腾讯*0.0129204&#x27;, &#x27;发生*0.0129204&#x27;, &#x27;济南*0.0129204&#x27;, &#x27;NBA*0.0129204&#x27;, &#x27;活动*0.0129204&#x27;, &#x27;方面*0.0103365&#x27;, &#x27;直接*0.0103365&#x27;, &#x27;水平*0.0103365&#x27;, &#x27;没有*0.0103365&#x27;, &#x27;·*0.0103365&#x27;, &#x27;仅*0.0103365&#x27;, &#x27;功能*0.0103365&#x27;, &#x27;尴尬*0.0077525&#x27;, &#x27;陕西*0.0077525&#x27;, &#x27;令狐冲*0.0077525&#x27;, &#x27;棋牌*0.0077525&#x27;]</span></span><br><span class="line"><span class="string">[&#x27;上联*0.0362817&#x27;, &#x27;下联*0.0362817&#x27;, &#x27;城市*0.0294789&#x27;, &#x27;三*0.0181411&#x27;, &#x27;游客*0.0158735&#x27;, &#x27;公里*0.0158735&#x27;, &#x27;深圳*0.0158735&#x27;, &#x27;勇士*0.0136059&#x27;, &#x27;千*0.0136059&#x27;, &#x27;火箭*0.0136059&#x27;, &#x27;座*0.0136059&#x27;, &#x27;上海*0.0113383&#x27;, &#x27;泰山*0.0113383&#x27;, &#x27;黄山*0.0113383&#x27;, &#x27;造*0.0113383&#x27;, &#x27;赵本山*0.0113383&#x27;, &#x27;分钟*0.0113383&#x27;, &#x27;正确</span></span><br><span class="line"><span class="string">*0.0090708&#x27;, &#x27;内容*0.0090708&#x27;, &#x27;有人*0.0090708&#x27;]</span></span><br><span class="line"><span class="string">[&#x27;美国*0.0388606&#x27;, &#x27;伊朗*0.0310886&#x27;, &#x27;车*0.0284980&#x27;, &#x27;真的*0.0207259&#x27;, &#x27;超*0.0155446&#x27;, &#x27;名*0.0129539&#x27;, &#x27;叙利亚*0.0129539&#x27;, &#x27;小时*0.0129539&#x27;, &#x27;最多*0.0129539&#x27;, &#x27;空袭*0.0129539&#x27;, &#x27;面临*0.0129539&#x27;, &#x27;适合*0.0129539&#x27;, &#x27;外*0.0103632&#x27;, &#x27;升级*0.0103632&#x27;, &#x27;进入*0.0103632&#x27;, &#x27;鸡*0.0077726&#x27;, &#x27;退出*0.0077726&#x27;, &#x27;季*0.0077726&#x27;, &#x27;大型*0.0077726&#x27;, &#x27;计算机*0.0077726&#x27;]</span></span><br><span class="line"><span class="string">[&#x27;买*0.0467039&#x27;, &#x27;万*0.0439566&#x27;, &#x27;国家*0.0247259&#x27;, &#x27;中*0.0219786&#x27;, &#x27;米*0.0192313&#x27;, &#x27;吃*0.0164841&#x27;, &#x27;出*0.0164841&#x27;, &#x27;行*0.0137368&#x27;, &#x27;知道*0.0137368&#x27;, &#x27;最 </span></span><br><span class="line"><span class="string">后*0.0137368&#x27;, &#x27;启动*0.0137368&#x27;, &#x27;现身*0.0109896&#x27;, &#x27;河南*0.0109896&#x27;, &#x27;战争*0.0109896&#x27;, &#x27;作品*0.0109896&#x27;, &#x27;时*0.0109896&#x27;, &#x27;抵达*0.0109896&#x27;, &#x27;文明*0.0109896&#x27;, &#x27;工作*0.0082423&#x27;, &#x27;每月*0.0082423&#x27;]</span></span><br><span class="line"><span class="string">[&#x27;中国*0.0635299&#x27;, &#x27;世界*0.0447064&#x27;, &#x27;高*0.0211770&#x27;, &#x27;链*0.0188240&#x27;, &#x27;成为*0.0188240&#x27;, &#x27;原因*0.0188240&#x27;, &#x27;前*0.0164711&#x27;, &#x27;区块*0.0164711&#x27;, &#x27;美元*0.0164711&#x27;, &#x27;技术*0.0141181&#x27;, &#x27;曾经*0.0141181&#x27;, &#x27;今年*0.0117652&#x27;, &#x27;平台*0.0117652&#x27;, &#x27;认为*0.0094123&#x27;, &#x27;太空*0.0094123&#x27;, &#x27;唯一*0.0094123&#x27;, &#x27;无法*0.0094123&#x27;, &#x27;北京</span></span><br><span class="line"><span class="string">*0.0094123&#x27;, &#x27;解说*0.0094123&#x27;, &#x27;排名*0.0094123&#x27;]</span></span><br><span class="line"><span class="string">[&#x27;日*0.0374070&#x27;, &#x27;游戏*0.0374070&#x27;, &#x27;「*0.0349132&#x27;, &#x27;钱*0.0224444&#x27;, &#x27;以色列*0.0174569&#x27;, &#x27;农村*0.0174569&#x27;, &#x27;省*0.0149631&#x27;, &#x27;建*0.0124694&#x27;, &#x27;天*0.0124694&#x27;, </span></span><br><span class="line"><span class="string">&#x27;东西*0.0124694&#x27;, &#x27;市场*0.0124694&#x27;, &#x27;考*0.0099756&#x27;, &#x27;泰国*0.0099756&#x27;, &#x27;创业*0.0099756&#x27;, &#x27;快*0.0099756&#x27;, &#x27;车*0.0099756&#x27;, &#x27;处理*0.0074818&#x27;, &#x27;机器人*0.0074818&#x27;, &#x27;届*0.0074818&#x27;, &#x27;灯*0.0074818&#x27;]</span></span><br><span class="line"><span class="string">[&#x27;次*0.0336328&#x27;, &#x27;会*0.0291485&#x27;, &#x27;联盟*0.0246641&#x27;, &#x27;英雄*0.0246641&#x27;, &#x27;玩*0.0201798&#x27;, &#x27;需要*0.0201798&#x27;, &#x27;股*0.0134534&#x27;, &#x27;复仇者*0.0134534&#x27;, &#x27;冠军*0.0134534&#x27;, &#x27;战场*0.0112112&#x27;, &#x27;回应*0.0112112&#x27;, &#x27;很多*0.0089691&#x27;, &#x27;获*0.0089691&#x27;, &#x27;赛*0.0089691&#x27;, &#x27;带*0.0089691&#x27;, &#x27;看到*0.0089691&#x27;, &#x27;贷款*0.0089691&#x27;, &#x27;虎牙*0.0089691&#x27;, &#x27;怕*0.0089691&#x27;, &#x27;央视*0.0089691&#x27;]</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">doc_tp_dist: [[0.00294118 0.00294118 0.47352941 ... 0.00294118 0.00294118 0.00294118]</span></span><br><span class="line"><span class="string"> [0.065625   0.003125   0.003125   ... 0.065625   0.003125   0.003125  ]</span></span><br><span class="line"><span class="string"> [0.00454545 0.00454545 0.00454545 ... 0.00454545 0.36818182 0.00454545]</span></span><br><span class="line"><span class="string"> ...</span></span><br><span class="line"><span class="string"> [0.00714286 0.72142857 0.00714286 ... 0.00714286 0.00714286 0.00714286]</span></span><br><span class="line"><span class="string"> [0.00833333 0.00833333 0.00833333 ... 0.00833333 0.00833333 0.00833333]</span></span><br><span class="line"><span class="string"> [0.00625    0.00625    0.00625    ... 0.13125    0.00625    0.00625   ]]</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
 <p>直观来说，从结果上看，部分主题的主题词具有一定关联性，而其余主题则较为隐晦；而定量地评测主题建模结果的优劣是另一个大话题，本文不予展开。如果我们更换一下停用词，比如把停用词换成baidu_stopwords，结果也会发生较大改变，这表明主题模型的效果受停用词库的影响较大，在选择停用词时应充分考虑数据所属的领域。</p>
-<h4 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h4>
+<h4 id="参考文献">参考文献</h4>
+
   </div>
 </article>
 
